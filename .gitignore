@@ -1,6 +1,9 @@
 node_modules
 dist
 test.js
+test-db.js
+reset-database.js
 package-lock.json
+note.txt
 .idea
 .vscode

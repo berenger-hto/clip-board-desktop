@@ -17,8 +17,6 @@ const createWindow = () => {
     win.loadFile(join(__dirname, "..", "renderer", "index.html"))
 }
 
-let lastText = ""
-
 app.whenReady().then(() => {
     createWindow()
     serve({

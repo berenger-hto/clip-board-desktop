@@ -1,7 +1,8 @@
-import { DB } from "../model/DB";
+import { UserModel } from "../model/UserModel";
 
 export class User {
     constructor() {
-        new DB()
+        const db = new UserModel()
+        db.createUniqueToken()
     }
 }
