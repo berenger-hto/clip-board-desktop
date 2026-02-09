@@ -1,0 +1,27 @@
+{
+  "name": "clip-board-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "build": "tsc && cpx \"src/renderer/**/*\" dist/renderer && cpx \"src/db/**/*\" dist/db",
+    "dev": "npm run build && electron . --no-sandbox --disable-setuid-sandbox"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/electron": "^1.4.38",
+    "@types/node": "^25.2.2",
+    "cpx": "^1.5.0",
+    "electron": "^40.2.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "clipboardy": "^5.2.1",
+    "hono": "^4.11.9",
+    "lowdb": "^7.0.1"
+  }
+}
