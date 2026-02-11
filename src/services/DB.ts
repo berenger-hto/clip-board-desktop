@@ -1,17 +1,11 @@
 import Datastore from "@seald-io/nedb"
-import { join } from "node:path"
-import { baseDir } from "../constants/baseDir"
-
-type Data = Record<string, string | number>
-type Option = {
-    limit?: number
-    order?: "ASC" | "DESC"
-}
+import { dbPath } from "../constants/baseDir"
+import { Data, Option } from "../types/types"
 
 export class DB {
     private async loadDB() {
         const db = new Datastore({
-            filename: join(baseDir, "..", "db", "database.db"),
+            filename: dbPath,
             autoload: true,
             timestampData: true
         })
@@ -46,17 +40,10 @@ export class DB {
                     .limit(options.limit)
             }
 
-            return await db.findAsync<Data[] | []>(data)
+            return await db.findAsync(data)
         } catch (e) {
             console.error("Erreur lors de la récupération des données dans la base de donnée : " + (e as Error).message)
             process.kill(process.pid, 'SIGINT')
         }
-    }
-
-    async getSmartData(limit: number = 50, order: "DESC" | "ASC" = "DESC") {
-        const db = await this.loadDB()
-        return await db.findAsync({})
-            .sort({ createdAt: order === "DESC" ? -1 : 1 })
-            .limit(limit)
     }
 }
