@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    user-select: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(37, 140, 244, 0.2);
+    border-radius: 10px;
+}
+
+/* Clipboard Tile Hover Effect */
+.clipboard-tile:hover .tile-actions {
+    opacity: 1;
+}
+
+/* Monospace Font for Pre Elements */
+pre {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Titlebar Draggable Region */
+.titlebar {
+    -webkit-app-region: drag;
+}
+
+.no-drag {
+    -webkit-app-region: no-drag;
+}

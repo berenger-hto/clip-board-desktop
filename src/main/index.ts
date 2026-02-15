@@ -8,8 +8,8 @@ import { UserService } from '../services/User.service';
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1200,
+        height: 900,
         titleBarStyle: "hidden",
         webPreferences: {
             preload: join(__dirname, "preload.js")
@@ -17,16 +17,18 @@ const createWindow = () => {
     })
 
     win.loadFile(join(__dirname, "..", "renderer", "index.html"))
+    win.webContents.openDevTools()
+    return win
 }
 
 
 app.whenReady().then(() => {
-    createWindow()
-    UserService.createUniqueUserToken()
+    const win = createWindow()
+    UserService.createUniqueUserToken(win)
 
     serve({
         fetch: hono.fetch,
-        port: 3000
+        port: 9876
     }, (info) => {
         console.log(`Server is running on http://localhost:${info.port}`)
     })

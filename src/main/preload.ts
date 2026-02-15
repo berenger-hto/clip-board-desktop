@@ -1,4 +1,3 @@
-import clipboard from "clipboardy";
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld('electronAPI', {

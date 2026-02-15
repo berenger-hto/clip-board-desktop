@@ -5,7 +5,8 @@
   "main": "dist/main/index.js",
   "scripts": {
     "check": "tsc --noEmit",
-    "build": "tsc && cpx \"src/renderer/**/*\" dist/renderer",
+    "build:css": "tailwindcss -i ./src/renderer/assets/css/styles.css -o ./src/renderer/assets/css/output.css --minify",
+    "build": "npm run build:css && tsc && cpx \"src/renderer/**/*\" dist/renderer",
     "dev": "npm run build && electron . --no-sandbox --disable-setuid-sandbox"
   },
   "keywords": [],
@@ -17,6 +18,7 @@
     "@types/node": "^25.2.2",
     "cpx": "^1.5.0",
     "electron": "^40.2.1",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
     "@seald-io/nedb": "^4.1.2",
     "clipboardy": "^5.2.1",
     "dotenv": "^17.2.4",
-    "hono": "^4.11.9"
+    "hono": "^4.11.9",
+    "zod": "^4.3.6"
   }
 }
