@@ -3,21 +3,39 @@ import { dbPath } from "../constants/baseDir"
 import { Data, Option } from "../types/types"
 
 export class DB {
-    private async loadDB() {
-        const db = new Datastore({
-            filename: dbPath,
-            autoload: true,
-            timestampData: true
-        })
+    private static instance: Datastore | null = null
+    private static loadingPromise: Promise<Datastore> | null = null
 
-        try {
-            await db.loadDatabaseAsync()
-        } catch (error) {
-            console.error("Erreur lors du chargement de la base de donnée: " + (error as Error).message)
-            process.kill(process.pid, 'SIGINT')
+    private async loadDB(): Promise<Datastore> {
+        if (DB.instance) {
+            return DB.instance
         }
 
-        return db
+        if (DB.loadingPromise) {
+            return DB.loadingPromise
+        }
+
+        DB.loadingPromise = (async () => {
+            const db = new Datastore({
+                filename: dbPath,
+                autoload: true,
+                timestampData: true
+            })
+
+            try {
+                await db.loadDatabaseAsync()
+                DB.instance = db
+                return db
+            } catch (error) {
+                console.error("Erreur lors du chargement de la base de donnée: " + (error as Error).message)
+                process.kill(process.pid, 'SIGINT')
+                throw error
+            } finally {
+                DB.loadingPromise = null
+            }
+        })()
+
+        return DB.loadingPromise
     }
 
     async insert(data: Data) {

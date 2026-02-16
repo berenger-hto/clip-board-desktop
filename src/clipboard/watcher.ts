@@ -1,10 +1,15 @@
 import clipboard from "clipboardy"
 import { setInterval } from "node:timers"
-import { insertDataToDB } from "../services/Clipboard.service"
+import { insertDataToDB, getLastEntry } from "../services/Clipboard.service"
 
 let lastContent = ''
 
-export function watcher() {
+export async function watcher() {
+    const lastEntry = await getLastEntry()
+    if (lastEntry) {
+        lastContent = lastEntry.content as string
+    }
+
     setInterval(async () => {
         try {
             const currentContent = await clipboard.read()

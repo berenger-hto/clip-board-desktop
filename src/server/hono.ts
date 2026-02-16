@@ -2,10 +2,9 @@ import { Hono } from 'hono'
 import { cors } from "hono/cors"
 import { UserController } from './controllers/User.controller'
 import { HTTPException } from "hono/http-exception"
-import { UserService } from '../services/User.service'
 import { ZodError } from 'zod'
 import {logger} from "hono/logger"
-
+import { DeviceController } from './controllers/Device.controller'
 
 export const hono = new Hono()
 
@@ -21,7 +20,8 @@ hono.use(cors({
 
 const prefix = "/v1/"
 
-hono.post(prefix + 'auth/me', UserController.me)
+hono.post(prefix + 'me', UserController.me)
+hono.get(prefix + 'device', DeviceController.device)
 
 hono.notFound((c) => {
     return c.json({

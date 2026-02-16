@@ -22,7 +22,7 @@ const createWindow = () => {
 }
 
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     const win = createWindow()
     UserService.createUniqueUserToken(win)
 
@@ -37,6 +37,6 @@ app.whenReady().then(() => {
         event.sender.send('response-data', { message: "Dernier texte : " + clipboard.readSync() })
     })
 
-    watcher()
+    await watcher()
 
 })

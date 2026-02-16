@@ -8,3 +8,15 @@ export type Option = {
 export type EnvKey = {
     [key: string]: string
 }
+
+export type Device = {
+    deviceName: string
+    osName: string
+    osVersion: string
+}
+
+export type MobileDevice = {
+    deviceName: string
+    deviceOSName: string
+    deviceOSVersion: string
+}
