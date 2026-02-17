@@ -3,12 +3,33 @@ import { cors } from "hono/cors"
 import { UserController } from './controllers/User.controller'
 import { HTTPException } from "hono/http-exception"
 import { ZodError } from 'zod'
-import {logger} from "hono/logger"
+import { logger } from "hono/logger"
 import { DeviceController } from './controllers/Device.controller'
 import { ClipboardController } from './controllers/Clipboard.controller'
 import { Secure } from './middlewares/Secure.middleware'
+import { Server } from 'socket.io'
 
 export const hono = new Hono()
+
+export let io: Server
+
+export const setupSocket = (server: any) => {
+    io = new Server(server, {
+        cors: {
+            origin: "*",
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        }
+    })
+
+    io.on("connection", (socket) => {
+        console.log("a user connected")
+        socket.on("disconnect", () => {
+            console.log("user disconnected")
+        })
+    })
+
+    return io
+}
 
 hono.use("*", logger())
 

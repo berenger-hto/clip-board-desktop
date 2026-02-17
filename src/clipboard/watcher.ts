@@ -1,6 +1,7 @@
 import clipboard from "clipboardy"
 import { setInterval } from "node:timers"
 import { insertDataToDB, getLastEntry } from "../services/Clipboard.service"
+import { io } from "../server/hono"
 
 let lastContent = ''
 
@@ -21,6 +22,9 @@ export async function watcher() {
             lastContent = currentContent
 
             await insertDataToDB(currentContent)
+            if (io) {
+                io.emit("clipboard", currentContent)
+            }
 
             console.log(currentContent)
 

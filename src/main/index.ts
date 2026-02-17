@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server';
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { hono } from '../server/hono';
+import { hono, setupSocket } from '../server/hono';
 import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
@@ -26,12 +26,14 @@ app.whenReady().then(async () => {
     const win = createWindow()
     UserService.createUniqueUserToken(win)
 
-    serve({
+    const server = serve({
         fetch: hono.fetch,
         port: 9876
     }, (info) => {
         console.log(`Server is running on http://localhost:${info.port}`)
     })
+
+    setupSocket(server)
 
     ipcMain.on('request-data', (event) => {
         event.sender.send('response-data', { message: "Dernier texte : " + clipboard.readSync() })
