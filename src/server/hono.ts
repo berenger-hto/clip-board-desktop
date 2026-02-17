@@ -5,6 +5,8 @@ import { HTTPException } from "hono/http-exception"
 import { ZodError } from 'zod'
 import {logger} from "hono/logger"
 import { DeviceController } from './controllers/Device.controller'
+import { ClipboardController } from './controllers/Clipboard.controller'
+import { Secure } from './middlewares/Secure.middleware'
 
 export const hono = new Hono()
 
@@ -22,6 +24,7 @@ const prefix = "/v1/"
 
 hono.post(prefix + 'me', UserController.me)
 hono.get(prefix + 'device', DeviceController.device)
+hono.get(prefix + 'clipboard', Secure.authorize, ClipboardController.clipboard)
 
 hono.notFound((c) => {
     return c.json({
