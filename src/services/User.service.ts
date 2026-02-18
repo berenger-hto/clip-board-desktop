@@ -5,12 +5,11 @@ import { type BrowserWindow } from "electron"
 const userModel = new UserModel()
 
 export class UserService {
-    static async createUniqueUserToken(win: BrowserWindow) {
+    static async createUniqueUserToken() {
         const tokenExist = await userModel.tokenExist()
         if (tokenExist) return
         const token = randomBytes(32).toString('base64')
         await userModel.saveUserToken(token)
-        win.webContents.executeJavaScript("localStorage.setItem('token', " + JSON.stringify(token) + ");")
     }
 
     static async getUniqueUserToken() {

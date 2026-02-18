@@ -4,6 +4,7 @@ import os from "node:os"
 import { z } from "zod"
 import { HTTPException } from "hono/http-exception";
 import { DeviceModel } from "../model/Device.model";
+import { Notification } from "electron";
 
 const userModel = new UserModel()
 const deviceModel = new DeviceModel()
@@ -54,6 +55,11 @@ export class UserController {
         if (!deviceExist) {
             await deviceModel.addDevice(data.deviceName, data.deviceOSName, data.deviceOSVersion)
         }
+
+        new Notification({
+            title: "Appareil connecté !",
+            body: `${data.deviceName} est connecté !`,
+        }).show()
 
         return c.json({
             success: true,

@@ -1,6 +1,6 @@
 import { app } from "electron"
 import path from "path"
-import {existsSync, mkdirSync} from "node:fs"
+import { existsSync, mkdirSync } from "node:fs"
 
 const isDev = !app.isPackaged
 

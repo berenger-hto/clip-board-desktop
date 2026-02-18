@@ -1,10 +1,11 @@
 import { serve } from '@hono/node-server';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
 import { hono, setupSocket } from '../server/hono';
 import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
 import { UserService } from '../services/User.service';
+import { getDataToDB } from '../services/Clipboard.service';
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -18,13 +19,45 @@ const createWindow = () => {
 
     win.loadFile(join(__dirname, "..", "renderer", "index.html"))
     win.webContents.openDevTools()
+
     return win
 }
 
+let tray
+let isQuiting = false
 
 app.whenReady().then(async () => {
     const win = createWindow()
-    UserService.createUniqueUserToken(win)
+    UserService.createUniqueUserToken()
+
+    tray = new Tray(join(__dirname, "icon.jpg"))
+
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: "Ouvrir",
+            click: () => win.show()
+        },
+        {
+            label: "Quitter",
+            click: () => {
+                isQuiting = true
+                app.quit()
+            }
+        }
+    ])
+
+    tray.setToolTip("Clipboard App")
+    tray.setContextMenu(contextMenu)
+
+    win.on("close", (event) => {
+        if (!isQuiting) {
+            console.log("On closed !")
+            event.preventDefault()
+            win.hide()
+        }
+    })
+
+    // On peut utiliser les sockets pour vérifier quand le téléphone envoie une donnée dans le clipboard
 
     const server = serve({
         fetch: hono.fetch,
@@ -37,6 +70,30 @@ app.whenReady().then(async () => {
 
     ipcMain.on('request-data', (event) => {
         event.sender.send('response-data', { message: "Dernier texte : " + clipboard.readSync() })
+    })
+
+    ipcMain.on('window-close', () => {
+        win.hide()
+    })
+
+    ipcMain.on('window-minimize', () => {
+        win.minimize()
+    })
+
+    ipcMain.on('window-maximize', () => {
+        if (win.isMaximized()) {
+            win.unmaximize()
+        } else {
+            win.maximize()
+        }
+    })
+
+    ipcMain.handle("clipboard-data", async () => {
+        return await getDataToDB()
+    })
+
+    ipcMain.handle("get-token", async () => {
+        return await UserService.getUniqueUserToken()
     })
 
     await watcher()
