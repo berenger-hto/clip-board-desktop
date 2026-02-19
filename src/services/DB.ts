@@ -64,4 +64,10 @@ export class DB {
             process.kill(process.pid, 'SIGINT')
         }
     }
+
+    async delete(_id: string) {
+        const db = await this.loadDB()
+        const numRemoved = await db.removeAsync({ _id }, {})
+        return numRemoved > 0
+    }
 }

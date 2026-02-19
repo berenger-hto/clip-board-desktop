@@ -46,6 +46,7 @@ const prefix = "/v1/"
 hono.post(prefix + 'me', UserController.me)
 hono.get(prefix + 'device', DeviceController.device)
 hono.get(prefix + 'clipboard', Secure.authorize, ClipboardController.clipboard)
+hono.delete(prefix + 'clipboard/:id', Secure.authorize, ClipboardController.deleteData)
 
 hono.notFound((c) => {
     return c.json({

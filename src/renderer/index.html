@@ -217,6 +217,11 @@
             </div>
 
             <div class="mt-auto space-y-3 no-drag">
+                <button id="toggle-incognito"
+                    class="w-full flex items-center justify-center gap-2 py-3 bg-primary/10 hover:bg-primary text-primary hover:text-white font-semibold rounded-xl border border-primary/20 transition-all mb-3">
+                    <span class="material-icons-outlined text-[18px]" id="incognito-icon">visibility</span>
+                    <span id="incognito-text">Mode Incognito : OFF</span>
+                </button>
                 <button
                     class="w-full flex items-center justify-center gap-2 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow-lg shadow-red-500/20">
                     <span class="material-icons-outlined text-[18px]">delete_sweep</span>
@@ -303,6 +308,33 @@
             })
             document.getElementById('max-btn').addEventListener('click', () => {
                 window.electronAPI.windowControl.maximize()
+            })
+
+            // Incognito Mode
+            const toggleIncognitoBtn = document.getElementById('toggle-incognito')
+            const incognitoIcon = document.getElementById('incognito-icon')
+            const incognitoText = document.getElementById('incognito-text')
+
+            const updateIncognitoUI = (isIncognito) => {
+                if (isIncognito) {
+                    toggleIncognitoBtn.classList.remove('bg-primary/10', 'text-primary')
+                    toggleIncognitoBtn.classList.add('bg-primary', 'text-white')
+                    incognitoIcon.innerText = 'visibility_off'
+                    incognitoText.innerText = 'Mode Incognito Activé'
+                } else {
+                    toggleIncognitoBtn.classList.add('bg-primary/10', 'text-primary')
+                    toggleIncognitoBtn.classList.remove('bg-primary', 'text-white')
+                    incognitoIcon.innerText = 'visibility'
+                    incognitoText.innerText = 'Mode Incognito Désactivé'
+                }
+            }
+
+            // Sync initial state
+            window.electronAPI.isIncognito().then(updateIncognitoUI)
+
+            toggleIncognitoBtn.addEventListener('click', async () => {
+                const isIncognito = await window.electronAPI.toggleIncognito()
+                updateIncognitoUI(isIncognito)
             })
 
             setTimeout(() => {

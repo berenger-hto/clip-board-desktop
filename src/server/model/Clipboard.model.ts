@@ -13,4 +13,8 @@ export class ClipboardModel {
             value: d.content
         })) : []
     }
+
+    public async deleteData(id: string) {
+        return await db.delete(id)
+    }
 } 

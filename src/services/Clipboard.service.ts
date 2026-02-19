@@ -1,6 +1,7 @@
 import { DB } from "./DB";
 import { contentType } from "../functions/detectContentType";
 import { ClipboardModel } from "../server/model/Clipboard.model";
+import { Notification } from "electron";
 
 const db = new DB()
 const clipboardModel = new ClipboardModel()
@@ -17,4 +18,12 @@ export async function getLastEntry() {
 
 export async function getDataToDB(limit: number = 50) {
     return await clipboardModel.getData(limit)
+}
+
+export async function deleteToDB(id: string) {
+    const isDeleted = await clipboardModel.deleteData(id)
+    new Notification({
+        title: "ClipboardX",
+        body: isDeleted ? "Données supprimées !" : "Erreur lors de la suppression"
+    }).show()
 }

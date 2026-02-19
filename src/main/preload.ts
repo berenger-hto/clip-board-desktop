@@ -9,5 +9,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
         maximize: () => ipcRenderer.send('window-maximize'),
     },
     clipboardData: () => ipcRenderer.invoke('clipboard-data'),
-    getToken: () => ipcRenderer.invoke('get-token')
+    getToken: () => ipcRenderer.invoke('get-token'),
+    toggleIncognito: () => ipcRenderer.invoke('toggle-incognito'),
+    isIncognito: () => ipcRenderer.invoke('is-incognito'),
+    deleteData: (id: string) => ipcRenderer.invoke('delete-data', id)
 })

@@ -1,11 +1,12 @@
 import { serve } from '@hono/node-server';
-import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, Notification } from 'electron';
 import { hono, setupSocket } from '../server/hono';
 import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
 import { UserService } from '../services/User.service';
-import { getDataToDB } from '../services/Clipboard.service';
+import { getDataToDB, deleteToDB } from '../services/Clipboard.service';
+import { store } from '../store';
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -94,6 +95,25 @@ app.whenReady().then(async () => {
 
     ipcMain.handle("get-token", async () => {
         return await UserService.getUniqueUserToken()
+    })
+
+    ipcMain.handle("toggle-incognito", () => {
+        store.isIncognito = !store.isIncognito
+
+        new Notification({
+            title: "ClipboardX",
+            body: store.isIncognito ? "Mode Incognito Activé" : "Mode Incognito Désactivé"
+        }).show()
+
+        return store.isIncognito
+    })
+
+    ipcMain.handle("is-incognito", () => {
+        return store.isIncognito
+    })
+
+    ipcMain.handle("delete-data", async (_, id: string) => {
+        return await deleteToDB(id)
     })
 
     await watcher()

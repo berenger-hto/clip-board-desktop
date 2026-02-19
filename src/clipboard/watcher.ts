@@ -2,6 +2,7 @@ import clipboard from "clipboardy"
 import { setInterval } from "node:timers"
 import { insertDataToDB, getLastEntry } from "../services/Clipboard.service"
 import { io } from "../server/hono"
+import { store } from "../store"
 
 let lastContent = ''
 
@@ -12,6 +13,11 @@ export async function watcher() {
     }
 
     setInterval(async () => {
+        if (store.isIncognito) {
+            lastContent = await clipboard.read()
+            return
+        }
+
         try {
             const currentContent = await clipboard.read()
 

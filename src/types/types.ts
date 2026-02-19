@@ -5,10 +5,6 @@ export type Option = {
     order?: "ASC" | "DESC"
 }
 
-export type EnvKey = {
-    [key: string]: string
-}
-
 export type Device = {
     deviceName: string
     osName: string
