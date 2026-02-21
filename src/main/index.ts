@@ -5,13 +5,14 @@ import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
 import { UserService } from '../services/User.service';
-import { getDataToDB, deleteToDB } from '../services/Clipboard.service';
+import { getDataToDB, deleteToDB, deleteAllToDB } from '../services/Clipboard.service';
 import { store } from '../store';
+import { getDevices } from '../services/Device.service';
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 1200,
-        height: 900,
+        width: 1500,
+        height: 1000,
         titleBarStyle: "hidden",
         webPreferences: {
             preload: join(__dirname, "preload.js")
@@ -114,6 +115,14 @@ app.whenReady().then(async () => {
 
     ipcMain.handle("delete-data", async (_, id: string) => {
         return await deleteToDB(id)
+    })
+
+    ipcMain.handle("get-devices", async () => {
+        return await getDevices()
+    })
+
+    ipcMain.handle("delete-all", async () => {
+        return await deleteAllToDB()
     })
 
     await watcher()

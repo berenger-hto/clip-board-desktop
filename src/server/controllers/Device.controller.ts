@@ -8,7 +8,7 @@ export class DeviceController {
         const username = os.userInfo().username
         return c.json({
             success: true,
-            message: "My device",
+            message: "Mon appareil",
             os: {
                 deviceName,
                 platform,

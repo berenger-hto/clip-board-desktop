@@ -14,7 +14,7 @@ export class ClipboardModel {
         })) : []
     }
 
-    public async deleteData(id: string) {
-        return await db.delete(id)
+    public async deleteData(item: string | Record<string, string | number>, multiMode: boolean = false) {
+        return await db.delete(item, multiMode)
     }
 } 

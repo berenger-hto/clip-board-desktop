@@ -5,6 +5,7 @@ import { z } from "zod"
 import { HTTPException } from "hono/http-exception";
 import { DeviceModel } from "../model/Device.model";
 import { Notification } from "electron";
+import { io } from "../hono";
 
 const userModel = new UserModel()
 const deviceModel = new DeviceModel()
@@ -17,7 +18,6 @@ const dataSchema = z.object({
     deviceOSName: z.string({ error: "Nom du système inconnu" }),
     deviceOSVersion: z.string({ error: "Version du système inconnu" })
 })
-
 
 export class UserController {
     public static async me(c: Context) {
@@ -60,6 +60,8 @@ export class UserController {
             title: "Appareil connecté !",
             body: `${data.deviceName} est connecté !`,
         }).show()
+
+        io.emit("device:connected", true)
 
         return c.json({
             success: true,

@@ -12,5 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getToken: () => ipcRenderer.invoke('get-token'),
     toggleIncognito: () => ipcRenderer.invoke('toggle-incognito'),
     isIncognito: () => ipcRenderer.invoke('is-incognito'),
-    deleteData: (id: string) => ipcRenderer.invoke('delete-data', id)
+    deleteData: (id: string) => ipcRenderer.invoke('delete-data', id),
+    getDevices: () => ipcRenderer.invoke('get-devices'),
+    deleteAll: () => ipcRenderer.invoke('delete-all')
 })

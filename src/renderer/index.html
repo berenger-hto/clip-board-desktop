@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ClipboardX</title>
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://localhost:* https://api.clipboardx.app; frame-src 'self' https://api.clipboardx.app; font-src 'self' data:; media-src 'self' data:; object-src 'none'; base-uri 'self';" />
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* http://*:* ws://*:*; font-src 'self' data:; media-src 'self' data:; object-src 'none'; base-uri 'self';" />
 
     <link href="./assets/css/output.css" rel="stylesheet" />
     <link href="./assets/css/fonts.css" rel="stylesheet" />
-    <script defer src="./assets/js/qrcode.min.js"></script>
-    <script defer src="./assets/js/data.js"></script>
+    <script defer src="./assets/js/lib/qrcode.min.js"></script>
+    <script defer src="./assets/js/lib/socket.io.min.js"></script>
+    <script defer src="./assets/js/class/Data.js"></script>
+    <script defer src="./assets/js/class/Device.js"></script>
+    <script defer src="./assets/js/functions/timeAgo.js"></script>
 
 
     <style>
@@ -152,24 +155,26 @@
             </div>
 
             <div id="clipboard-list" class="flex-1 overflow-y-auto px-8 pb-8 space-y-4">
-                <template
-                    class="clipboard-tile group relative bg-white dark:bg-primary/5 border border-primary/5 rounded-xl p-5 transition-all shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <pre
-                            class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">git commit -m "feat: implement mobile sync"</pre>
-                        <div class="tile-actions opacity-0 transition-opacity flex gap-2 no-drag">
-                            <button
-                                class="p-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
-                                <span class="material-icons-outlined">content_copy</span>
-                            </button>
-                            <button
-                                class="p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
-                                <span class="material-icons-outlined">delete</span>
-                            </button>
+                <template>
+                    <div
+                        class="clipboard-tile group relative bg-white dark:bg-primary/5 border border-primary/5 rounded-xl p-5 transition-all shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <pre
+                                class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">git commit -m "feat: implement mobile sync"</pre>
+                            <div class="tile-actions opacity-0 transition-opacity flex gap-2 no-drag">
+                                <button
+                                    class="p-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
+                                    <span class="material-icons-outlined">content_copy</span>
+                                </button>
+                                <button
+                                    class="p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
+                                    <span class="material-icons-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-[10px] font-medium text-slate-400 uppercase">Copié il y a 5 min</span>
+                        <div class="text-right">
+                            <span class="text-[10px] font-medium text-slate-400 uppercase">Copié il y a 5 min</span>
+                        </div>
                     </div>
                 </template>
             </div>
@@ -196,23 +201,21 @@
                 </button>
             </div>
 
-            <div class="mb-auto">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Statut</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-xs font-semibold text-emerald-500 uppercase tracking-wide">Connecté</span>
-                    </div>
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Appareil connecté</h3>
                 </div>
-                <div class="space-y-3">
-                    <div
-                        class="flex items-center gap-3 p-3 bg-white dark:bg-primary/10 rounded-lg border border-primary/5">
-                        <span class="material-icons-outlined text-slate-400">smartphone</span>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium">iPhone 15 Pro</span>
-                            <span class="text-[10px] text-slate-500">Dernière sync: à l'instant</span>
+                <div id="devices-list" class="space-y-3 device-list overflow-hidden overflow-y-auto max-h-[200px]">
+                    <template>
+                        <div
+                            class="flex items-center gap-3 p-3 bg-white dark:bg-primary/10 rounded-lg border border-primary/5">
+                            <span class="material-icons-outlined text-slate-400">smartphone</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium">iPhone 15 Pro</span>
+                                <span class="text-[10px] text-slate-500">Dernière connexion: created_At to string</span>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
 
@@ -223,6 +226,7 @@
                     <span id="incognito-text">Mode Incognito : OFF</span>
                 </button>
                 <button
+                    id="delete-history"
                     class="w-full flex items-center justify-center gap-2 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow-lg shadow-red-500/20">
                     <span class="material-icons-outlined text-[18px]">delete_sweep</span>
                     Vider l'Historique
@@ -329,7 +333,6 @@
                 }
             }
 
-            // Sync initial state
             window.electronAPI.isIncognito().then(updateIncognitoUI)
 
             toggleIncognitoBtn.addEventListener('click', async () => {
@@ -345,13 +348,65 @@
                 }
             }, 1000)
 
-            window.electronAPI.clipboardData().then(data => {
-                const clipboardList = document.querySelector("#clipboard-list")
-                for (const d of data) {
-                    const dataObj = new Data(d)
-                    clipboardList.appendChild(dataObj.append())
+            const loadClipboardData = () => {
+                window.electronAPI.clipboardData().then(data => {
+                    const clipboardList = document.querySelector("#clipboard-list")
+                    for (const d of data) {
+                        const dataObj = new Data(d)
+                        clipboardList.appendChild(dataObj.append())
+                    }
+                    console.log(data)
+                })
+            }
+
+            const loadDevices = () => {
+                window.electronAPI.getDevices().then(devices => {
+                    const devicesList = document.querySelector("#devices-list")
+                    if (devices.length > 0) {
+                        for (const d of devices) {
+                            const deviceObj = new Device(d)
+                            devicesList.appendChild(deviceObj.append())
+                        }
+                    } else {
+                        devicesList.innerHTML = `<p class="text-sm text-slate-500 text-center no-device">Aucun appareil connecté récemment</p>`
+                    }
+                    console.log(devices)
+                })
+            }
+
+            loadDevices()
+            loadClipboardData()
+
+            document.getElementById("delete-history").addEventListener("click", () => {
+                if (confirm("Voulez-vous tout supprimé ?")) {
+                    window.electronAPI.deleteAll().then(() => {
+                        document.querySelector("#clipboard-list").innerHTML = ""
+                        loadClipboardData()
+                    })
                 }
-                console.log(data)
+            })
+
+            const privateIP = await getPrivateIP()
+            const PORT = 9876
+
+            const socket = io(`http://${privateIP}:${PORT}`)
+
+            socket.on("connect", () => {
+                console.log("Connected to server")
+            })
+
+            socket.on("disconnect", () => {
+                console.log("Disconnected")
+            })
+
+            socket.on("device:connected", () => {
+                document.querySelector("#devices-list").innerHTML = ""
+                loadDevices()
+            })
+
+            socket.on("clipboard", () => {
+                document.querySelector("#clipboard-list").innerHTML = ""
+                loadClipboardData()
             })
         })
 

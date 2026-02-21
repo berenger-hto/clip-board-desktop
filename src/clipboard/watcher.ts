@@ -7,6 +7,7 @@ import { store } from "../store"
 let lastContent = ''
 
 export async function watcher() {
+    
     const lastEntry = await getLastEntry()
     if (lastEntry) {
         lastContent = lastEntry.content as string

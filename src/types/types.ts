@@ -12,7 +12,7 @@ export type Device = {
 }
 
 export type MobileDevice = {
-    deviceName: string
-    deviceOSName: string
-    deviceOSVersion: string
+    deviceName?: string
+    deviceOSName?: string
+    deviceOSVersion?: string
 }

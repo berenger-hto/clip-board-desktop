@@ -51,23 +51,24 @@ export class DB {
     async get(data: Data = {}, options?: Option) {
         const db = await this.loadDB()
         try {
-            if (options?.limit) {
-                return await db.
-                    findAsync(data ?? {}).
-                    sort({ createdAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
-                    .limit(options.limit)
+            let query = db.findAsync(data ?? {})
+            if (options?.order) {
+                query = query.sort({ createdAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
             }
-
-            return await db.findAsync(data)
+            
+            if (options?.limit) {
+                query = query.limit(options.limit)
+            }
+            return await query
         } catch (e) {
             console.error("Erreur lors de la récupération des données dans la base de donnée : " + (e as Error).message)
             process.kill(process.pid, 'SIGINT')
         }
     }
 
-    async delete(_id: string) {
+    async delete(item: string | Record<string, string | number>, multi: boolean = false) {
         const db = await this.loadDB()
-        const numRemoved = await db.removeAsync({ _id }, {})
+        const numRemoved = await db.removeAsync(typeof item === "string" ? { _id: item } : item, { multi })
         return numRemoved > 0
     }
 }
