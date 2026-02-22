@@ -5,7 +5,7 @@ import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
 import { UserService } from '../services/User.service';
-import { getDataToDB, deleteToDB, deleteAllToDB } from '../services/Clipboard.service';
+import { getDataToDB, deleteToDB, deleteAllToDB, writeToClipboard } from '../services/Clipboard.service';
 import { store } from '../store';
 import { getDevices } from '../services/Device.service';
 
@@ -114,7 +114,7 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("delete-data", async (_, id: string) => {
-        return await deleteToDB(id)
+        await deleteToDB(id)
     })
 
     ipcMain.handle("get-devices", async () => {
@@ -122,7 +122,11 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("delete-all", async () => {
-        return await deleteAllToDB()
+        await deleteAllToDB()
+    })
+
+    ipcMain.handle("write-to-clipboard", async (_, content: string) => {
+        await writeToClipboard(content)
     })
 
     await watcher()

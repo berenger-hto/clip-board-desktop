@@ -1,7 +1,17 @@
 class Device {
+    /** @type {string} */
     id;
+    /** @type {number} */
     createdAt;
+    /** @type {string} */
     name;
+
+    /**
+     * @param {Object} device
+     * @param {string} device.id
+     * @param {number} device.updatedAt
+     * @param {string} device.deviceName
+     */
     constructor(device) {
         this.id = device.id;
         this.createdAt = device.updatedAt;

@@ -3,6 +3,7 @@ import { contentType } from "../functions/detectContentType";
 import { ClipboardModel } from "../server/model/Clipboard.model";
 import { Notification } from "electron";
 import { io } from "../server/hono";
+import clipboard from "clipboardy";
 
 const db = new DB()
 const clipboardModel = new ClipboardModel()
@@ -26,7 +27,7 @@ export async function deleteToDB(id: string) {
     if (isDeleted) {
         io.emit("clipboard", true)
     }
-    
+
     new Notification({
         title: "ClipboardX",
         body: isDeleted ? "Données supprimées !" : "Erreur lors de la suppression"
@@ -34,13 +35,32 @@ export async function deleteToDB(id: string) {
 }
 
 export async function deleteAllToDB() {
-    const isDeleted = await clipboardModel.deleteData({ info: "clipboard" }, true) 
+    const isDeleted = await clipboardModel.deleteData({ info: "clipboard" }, true)
     if (isDeleted) {
         io.emit("clipboard", true)
     }
-    
+
     new Notification({
         title: "ClipboardX",
-        body: isDeleted ? "Données supprimées !" : "Erreur lors de la suppression"
+        body: isDeleted ? "Toutes les données ont été supprimées !" : "Erreur lors de la suppression"
     }).show()
+}
+
+export async function contentExist(content: string, limit: number = 50) {
+    console.time("ContentExist")
+    const data = await db.findOne({ info: "clipboard", content })
+    console.timeEnd("ContentExist")
+    return !!data
+}
+
+
+export async function writeToClipboard(content: string) {
+    try {
+        await clipboard.write(content)
+    } catch {
+        new Notification({
+            title: "ClipboardX",
+            body: "Erreur lors de l'écriture dans le presse-papier"
+        }).show()
+    }
 }

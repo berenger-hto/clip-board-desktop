@@ -3,6 +3,7 @@ import { setInterval } from "node:timers"
 import { insertDataToDB, getLastEntry } from "../services/Clipboard.service"
 import { io } from "../server/hono"
 import { store } from "../store"
+import { contentExist } from "../services/Clipboard.service"
 
 let lastContent = ''
 
@@ -27,6 +28,8 @@ export async function watcher() {
             }
 
             lastContent = currentContent
+            const exist = await contentExist(currentContent)
+            if (exist) return 
 
             await insertDataToDB(currentContent)
             if (io) {

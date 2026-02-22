@@ -25,6 +25,13 @@ export class DB {
             try {
                 await db.loadDatabaseAsync()
                 DB.instance = db
+
+                try {
+                    await db.ensureIndexAsync({ fieldName: 'content' })
+                } catch (idxError) {
+                    console.warn("Info: l'index sur 'content' n'a pas pu être créé ", (idxError as Error).message)
+                }
+
                 return db
             } catch (error) {
                 console.error("Erreur lors du chargement de la base de donnée: " + (error as Error).message)
@@ -55,7 +62,7 @@ export class DB {
             if (options?.order) {
                 query = query.sort({ createdAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
             }
-            
+
             if (options?.limit) {
                 query = query.limit(options.limit)
             }
@@ -70,5 +77,15 @@ export class DB {
         const db = await this.loadDB()
         const numRemoved = await db.removeAsync(typeof item === "string" ? { _id: item } : item, { multi })
         return numRemoved > 0
+    }
+
+    async findOne(item: Record<string, string | number>) {
+        const db = await this.loadDB()
+        try {
+            return await db.findOneAsync(item)
+        } catch (e) {
+            console.error("Erreur lors de la recherche dans la base de donnée : " + (e as Error).message)
+            process.kill(process.pid, 'SIGINT')
+        }
     }
 }
