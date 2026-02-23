@@ -20,4 +20,15 @@ export class DeviceModel {
         const devices = await db.get({ device: "device" }, { order: "DESC" })
         return devices ? devices : [] 
     }
+
+    public async findDevice(options: Required<MobileDevice>) {
+        const { deviceName, deviceOSVersion, deviceOSName } = options
+        const device = await db.findOne({ device: "device", deviceName, deviceOSName, deviceOSVersion })
+        return device
+    }
+
+    public async updateDevice(id: string, data: MobileDevice) {
+        const updated = await db.update(id, data)
+        return !!updated
+    }
 }

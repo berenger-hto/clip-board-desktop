@@ -1,15 +1,13 @@
 import clipboard from "clipboardy"
 import { setInterval } from "node:timers"
-import { insertDataToDB, getLastEntry } from "../services/Clipboard.service"
-import { io } from "../server/hono"
+import { ClipboardService } from "../services/Clipboard.service"
 import { store } from "../store"
-import { contentExist } from "../services/Clipboard.service"
 
 let lastContent = ''
 
 export async function watcher() {
-    
-    const lastEntry = await getLastEntry()
+
+    const lastEntry = await ClipboardService.getLastEntry()
     if (lastEntry) {
         lastContent = lastEntry.content as string
     }
@@ -28,13 +26,10 @@ export async function watcher() {
             }
 
             lastContent = currentContent
-            const exist = await contentExist(currentContent)
-            if (exist) return 
+            const exist = await ClipboardService.contentExist(currentContent)
+            if (exist) return
 
-            await insertDataToDB(currentContent)
-            if (io) {
-                io.emit("clipboard", currentContent)
-            }
+            await ClipboardService.addClipboardEntry(currentContent, "PC", "AUTO")
 
             console.log(currentContent)
 

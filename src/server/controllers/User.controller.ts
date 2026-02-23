@@ -45,15 +45,15 @@ export class UserController {
         const platform = os.platform()
         const username = os.userInfo().username
 
-        const allDevices = await deviceModel.getAllDevices()
-        const deviceExist = allDevices.find(d =>
-            d.deviceName.trim() === data.deviceName.trim() &&
-            d.deviceOSName.trim() === data.deviceOSName.trim() &&
-            d.deviceOSVersion.trim() === data.deviceOSVersion.trim()
-        )
+        const deviceExist = await deviceModel.findDevice(data)
 
         if (!deviceExist) {
             await deviceModel.addDevice(data.deviceName, data.deviceOSName, data.deviceOSVersion)
+        } else {
+            const isUpdated = await deviceModel.updateDevice(deviceExist._id, { ...data })
+            if (!isUpdated) {
+                throw new HTTPException(500, { message: "Erreur lors de la mise à jour de l'appareil" })
+            }
         }
 
         new Notification({
@@ -70,7 +70,7 @@ export class UserController {
                 deviceName,
                 username,
                 platform,
-            }
+            },
         })
     }
 }

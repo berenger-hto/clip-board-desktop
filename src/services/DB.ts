@@ -88,4 +88,15 @@ export class DB {
             process.kill(process.pid, 'SIGINT')
         }
     }
+
+    async update(item: Record<string, string | number> | string, data: Data) {
+        const db = await this.loadDB()
+        try {
+            const { numAffected } = await db.updateAsync(typeof item === "string" ? { _id: item } : item, { $set: data })
+            return numAffected > 0
+        } catch (e) {
+            console.error("Erreur lors de la mise à jour dans la base de donnée : " + (e as Error).message)
+            process.kill(process.pid, 'SIGINT')
+        }
+    }
 }

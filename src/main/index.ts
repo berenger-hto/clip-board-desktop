@@ -5,7 +5,7 @@ import { watcher } from '../clipboard/watcher';
 import { join } from 'node:path';
 import clipboard from 'clipboardy';
 import { UserService } from '../services/User.service';
-import { getDataToDB, deleteToDB, deleteAllToDB, writeToClipboard } from '../services/Clipboard.service';
+import { ClipboardService } from '../services/Clipboard.service';
 import { store } from '../store';
 import { getDevices } from '../services/Device.service';
 
@@ -91,7 +91,7 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("clipboard-data", async () => {
-        return await getDataToDB()
+        return await ClipboardService.getDataToDB()
     })
 
     ipcMain.handle("get-token", async () => {
@@ -114,7 +114,12 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("delete-data", async (_, id: string) => {
-        await deleteToDB(id)
+        const isDeleted = await ClipboardService.deleteClipboardEntry(id)
+
+        new Notification({
+            title: "ClipboardX",
+            body: isDeleted ? "Données supprimées !" : "Erreur lors de la suppression"
+        }).show()
     })
 
     ipcMain.handle("get-devices", async () => {
@@ -122,11 +127,16 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("delete-all", async () => {
-        await deleteAllToDB()
+        const isDeleted = await ClipboardService.deleteAllToDB()
+
+        new Notification({
+            title: "ClipboardX",
+            body: isDeleted ? "Toutes les données ont été supprimées !" : "Erreur lors de la suppression"
+        }).show()
     })
 
     ipcMain.handle("write-to-clipboard", async (_, content: string) => {
-        await writeToClipboard(content)
+        await ClipboardService.writeToClipboard(content)
     })
 
     await watcher()
