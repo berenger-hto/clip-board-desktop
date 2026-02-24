@@ -2,6 +2,7 @@ import { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 import { ClipboardService } from "../../services/Clipboard.service";
+import { wait } from "../../functions/wait";
 
 const addDataSchema = z.object({
     content: z.string().min(1, "Aucun contenu détecté"),
@@ -15,11 +16,24 @@ const updateDataSchema = z.object({
 })
 
 export class ClipboardController {
-    public static async clipboard(c: Context) {
+    public static async clipboardData(c: Context) {
         const limit = c.req.query("limit")
         const limitNumber = limit ? parseInt(limit, 10) : 50
         const data = await ClipboardService.getDataToDB(limitNumber)
+        if (data.length === 0) {
+            throw new HTTPException(404, { message: "Aucune donnée disponible" })
+        }
         return c.json({ success: true, message: "Données synchronisées", data })
+    }
+
+    public static async oneClipboardData(c: Context) {
+        const id = c.req.param("id")
+        // await wait()
+        const data = await ClipboardService.getOneData(id)
+        if (!data) {
+            throw new HTTPException(404, { message: "Donnée non trouvée" })
+        }
+        return c.json({ success: true, message: "Donnée récupérée", data })
     }
 
     public static async addData(c: Context) {

@@ -15,6 +15,18 @@ export class ClipboardModel {
         })) : []
     }
 
+    public async getOneData(id: string) {
+        const data = await db.get({ _id: id })
+        if (!data || data.length === 0) return null
+        return {
+            id: data[0]._id,
+            type: data[0].type,
+            createdAt: (new Date(data[0].createdAt).getTime()),
+            source: data[0].source,
+            value: data[0].content
+        }
+    }
+
     public async deleteData(item: string | Record<string, string | number>, multiMode: boolean = false) {
         return await db.delete(item, multiMode)
     }

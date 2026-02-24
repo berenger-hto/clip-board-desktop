@@ -55,12 +55,16 @@ export class ClipboardService {
         return await clipboardModel.getData(limit)
     }
 
+    public static async getOneData(id: string) {
+        return await clipboardModel.getOneData(id)
+    }
+
     public static async deleteAllToDB() {
         const isDeleted = await clipboardModel.deleteData({ info: "clipboard" }, true)
         if (isDeleted) {
             io.emit("clipboard", true)
         }
-        return isDeleted;
+        return isDeleted
     }
 
     public static async contentExist(content: string) {

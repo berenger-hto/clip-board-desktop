@@ -57,10 +57,11 @@ export class DB {
 
     async get(data: Data = {}, options?: Option) {
         const db = await this.loadDB()
+        if (!data) return []
         try {
-            let query = db.findAsync(data ?? {})
+            let query = db.findAsync(data)
             if (options?.order) {
-                query = query.sort({ createdAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
+                query = query.sort({ updatedAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
             }
 
             if (options?.limit) {

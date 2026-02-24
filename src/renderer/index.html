@@ -282,6 +282,10 @@
                     colorLight: "#fff",
                     correctLevel: QRCode.CorrectLevel.H
                 })
+                
+                qrContainer.removeAttribute("title")
+                const img = qrContainer.querySelector("img")
+                if (img) img.removeAttribute("title")
             }
 
             generateQRCode()

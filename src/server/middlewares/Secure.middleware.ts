@@ -7,7 +7,7 @@ export class Secure {
         const headers = c.req.header("Authorization")
         const token = await UserService.getUniqueUserToken()
         if (!token || token !== headers) {
-            throw new HTTPException(401, { message: "Accès non autorisé !" })
+            throw new HTTPException(401, { message: "Accès non autorisé. Essayez de vous reconnecter !" })
         }
         await next()
     }
