@@ -5,14 +5,14 @@ import { ClipboardService } from "../../services/Clipboard.service";
 import { wait } from "../../functions/wait";
 
 const addDataSchema = z.object({
-    content: z.string().min(1, "Aucun contenu détecté"),
-    type: z.string().min(1, "Aucun type détecté").refine((value) => ["AUTO", "CODE", "TEXT", "URL"].includes(value), "Type invalide"),
-    source: z.string().min(1, "Aucune source détectée").refine((value) => ["PC", "Mobile"].includes(value), "Source invalide")
+    content: z.string("Aucun contenu détecté").min(1),
+    type: z.string("Aucun type détecté").min(1).refine((value) => ["AUTO", "CODE", "TEXT", "URL"].includes(value), "Type invalide"),
+    source: z.string("Aucune source détectée").min(1).refine((value) => ["PC", "Mobile"].includes(value), "Source invalide")
 })
 
 const updateDataSchema = z.object({
-    content: z.string().min(1, "Aucun contenu détecté"),
-    type: z.string().min(1, "Aucun type détecté").refine((value) => ["AUTO", "CODE", "TEXT", "URL"].includes(value), "Type invalide")
+    content: z.string("Aucun contenu détecté").min(1),
+    type: z.string("Aucun type détecté").min(1).refine((value) => ["AUTO", "CODE", "TEXT", "URL"].includes(value), "Type invalide")
 })
 
 export class ClipboardController {
@@ -49,7 +49,7 @@ export class ClipboardController {
         const id = c.req.param("id")
         const body = await c.req.json()
         const data = updateDataSchema.parse(body)
-
+        // await wait(2000)
         const isUpdated = await ClipboardService.updateClipboardEntry(id, data.content, data.type)
         if (!isUpdated) throw new HTTPException(404, { message: "Erreur lors de la mise à jour" })
 

@@ -9,7 +9,7 @@ export class ClipboardModel {
         return data ? data.map(d => ({
             id: d._id,
             type: d.type,
-            createdAt: (new Date(d.createdAt).getTime()),
+            createdAt: (new Date(d.updatedAt).getTime()),
             source: d.source,
             value: d.content
         })) : []
