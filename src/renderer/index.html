@@ -19,11 +19,11 @@
 
 
     <style>
-        /* Skeleton loader styles */
+        /* ... existing styles ... */
         #skeleton-loader {
             position: fixed;
             inset: 0;
-            background: #101922;
+            background: #0a0510;
             z-index: 9999;
             opacity: 1;
             transition: opacity 0.3s ease-out;
@@ -36,9 +36,9 @@
 
         .skeleton {
             background: linear-gradient(90deg,
-                    rgba(37, 140, 244, 0.05) 0%,
-                    rgba(37, 140, 244, 0.1) 50%,
-                    rgba(37, 140, 244, 0.05) 100%);
+                    rgba(124, 58, 237, 0.05) 0%,
+                    rgba(124, 58, 237, 0.1) 50%,
+                    rgba(124, 58, 237, 0.05) 100%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 0.5rem;
@@ -67,11 +67,109 @@
             height: 2rem;
             margin-bottom: 1.5rem;
         }
+
+        /* OS Specific Window Controls */
+        body.win .titlebar,
+        body.linux .titlebar {
+            flex-direction: row-reverse;
+        }
+
+        body.win .win-controls,
+        body.linux .win-controls {
+            display: flex;
+            height: 100%;
+        }
+
+        .win-btn {
+            width: 46px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s;
+        }
+
+        .win-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .win-btn.close:hover {
+            background-color: #e81123;
+        }
+
+        .win-btn span {
+            font-size: 14px;
+        }
+
+        /* Hide macOS buttons on Windows/Linux and vice versa */
+        body.win #mac-controls,
+        body.linux #mac-controls {
+            display: none;
+        }
+
+        body:not(.win):not(.linux) #win-controls {
+            display: none;
+        }
+
+        /* Resizable Sidebar Styles */
+        #sidebar-resizer {
+            width: 4px;
+            cursor: col-resize;
+            background: rgba(124, 58, 237, 0.05);
+            transition: background 0.2s;
+            z-index: 20;
+            position: relative;
+        }
+
+        #sidebar-resizer:hover,
+        #sidebar-resizer.resizing {
+            background: #7c3aed;
+        }
+
+        #sidebar-resizer::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -4px;
+            right: -4px;
+        }
+
+        aside {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            min-width: 0;
+        }
+
+        aside.collapsed {
+            width: 0 !important;
+            opacity: 0;
+            padding: 0 !important;
+            margin: 0 !important;
+            pointer-events: none;
+        }
+
+        .resizing-active,
+        .resizing-active aside {
+            cursor: col-resize !important;
+            transition: none !important;
+        }
+
+        .resizing-active * {
+            pointer-events: none !important;
+        }
+
+        #toggle-sidebar-btn {
+            transition: transform 0.3s ease;
+        }
+
+        #toggle-sidebar-btn.collapsed {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display h-screen flex flex-col overflow-hidden">
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display h-screen flex flex-col overflow-hidden transition-colors duration-300">
 
     <!-- Skeleton Loader -->
     <div id="skeleton-loader">
@@ -120,30 +218,54 @@
     </div>
 
     <nav
-        class="titlebar h-10 flex items-center justify-between px-4 bg-background-light dark:bg-background-dark border-b border-primary/10 select-none relative">
-        <div class="flex items-center gap-2 w-[100px] z-10 no-drag">
-            <button id="close-btn"
-                class="w-4 h-4 rounded-full bg-mac-close border border-black/10 flex items-center justify-center group hover:opacity-50 duration-200">
+        class="titlebar h-10 flex items-center justify-between bg-background-light dark:bg-background-dark border-b border-primary/10 select-none relative">
+        <!-- macOS Controls -->
+        <div id="mac-controls" class="flex items-center gap-2 px-4 z-10 no-drag">
+            <button id="close-btn-mac"
+                class="w-3.5 h-3.5 rounded-full bg-mac-close border border-black/10 flex items-center justify-center group hover:opacity-80 duration-200">
             </button>
-            <button id="min-btn"
-                class="w-4 h-4 rounded-full bg-mac-minimize border border-black/10 flex items-center justify-center group hover:opacity-50 duration-200">
+            <button id="min-btn-mac"
+                class="w-3.5 h-3.5 rounded-full bg-mac-minimize border border-black/10 flex items-center justify-center group hover:opacity-80 duration-200">
             </button>
-            <button id="max-btn"
-                class="w-4 h-4 rounded-full bg-mac-maximize border border-black/10 flex items-center justify-center group hover:opacity-50 duration-200">
+            <button id="max-btn-mac"
+                class="w-3.5 h-3.5 rounded-full bg-mac-maximize border border-black/10 flex items-center justify-center group hover:opacity-80 duration-200">
+            </button>
+            <button id="sidebar-toggle-mac"
+                class="ml-4 p-1 rounded-md hover:bg-white/5 text-slate-500 hover:text-primary transition-all">
+                <span class="material-icons-outlined text-[18px]">keyboard_double_arrow_right</span>
             </button>
         </div>
 
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <!-- Windows/Linux Controls -->
+        <div id="win-controls" class="win-controls flex items-center h-full z-10 no-drag">
+            <button id="sidebar-toggle-win" class="win-btn">
+                <span class="material-icons-outlined">keyboard_double_arrow_right</span>
+            </button>
+            <div class="w-px h-10 bg-white/5 mx-1"></div>
+            <button id="min-btn-win" class="win-btn">
+                <span class="material-icons-outlined">remove</span>
+            </button>
+            <button id="max-btn-win" class="win-btn">
+                <span class="material-icons-outlined">crop_square</span>
+            </button>
+            <button id="close-btn-win" class="win-btn close">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+
+        <div
+            class="absolute inset-0 flex items-center justify-center pointer-events-none win:justify-start win:px-4 linux:justify-start linux:px-4">
             <div class="flex items-center gap-2">
                 <h1 class="text-xs font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400">ClipboardX
                 </h1>
             </div>
         </div>
-        <div class="w-[100px]"></div>
+        <div class="w-[100px] flex justify-end px-4 z-10 no-drag">
+        </div>
     </nav>
 
     <main class="flex-1 flex overflow-hidden">
-        <section class="w-[70%] flex flex-col border-r border-primary/5">
+        <section class="flex-1 flex flex-col border-r border-primary/5 min-w-0">
             <div class="p-8 pb-4">
                 <h2 class="text-2xl font-bold mb-6">Historique</h2>
                 <div class="relative group no-drag">
@@ -181,9 +303,14 @@
             </div>
         </section>
 
-        <aside class="w-[30%] bg-slate-50 dark:bg-primary/5 p-8 flex flex-col">
-            <h2 class="text-lg font-bold mb-8">Connexion Mobile</h2>
-            <div class="flex flex-col items-center justify-center mb-10">
+        <div id="sidebar-resizer"></div>
+
+        <aside id="main-sidebar" class="w-[350px] bg-slate-50 dark:bg-primary/5 flex flex-col overflow-hidden relative">
+            <div class="p-8 pb-0">
+                <h2 class="text-lg font-bold">Connexion Mobile</h2>
+            </div>
+
+            <div class="p-8 flex flex-col items-center justify-center">
                 <div
                     class="qr-container bg-white p-2 rounded-2xl shadow-xl mb-6 no-drag flex items-center justify-center overflow-hidden">
                     <div id="qrcode" class="bg-white"></div>
@@ -202,7 +329,7 @@
                 </button>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4 px-8">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Appareil connecté</h3>
                 </div>
@@ -220,7 +347,7 @@
                 </div>
             </div>
 
-            <div class="mt-auto space-y-3 no-drag">
+            <div class="mt-auto space-y-3 no-drag px-8">
                 <button id="toggle-incognito"
                     class="w-full flex items-center justify-center gap-2 py-3 bg-primary/10 hover:bg-primary text-primary hover:text-white font-semibold rounded-xl border border-primary/20 transition-all mb-3">
                     <span class="material-icons-outlined text-[18px]" id="incognito-icon">visibility</span>
@@ -282,7 +409,7 @@
                     colorLight: "#fff",
                     correctLevel: QRCode.CorrectLevel.H
                 })
-                
+
                 qrContainer.removeAttribute("title")
                 const img = qrContainer.querySelector("img")
                 if (img) img.removeAttribute("title")
@@ -307,15 +434,82 @@
                 }
             })
 
-            // Window Controls
-            document.getElementById('close-btn').addEventListener('click', () => {
-                window.electronAPI.windowControl.close()
+            // Window Controls Initialization
+            const platform = window.electronAPI.platform
+            if (platform === 'win32') document.body.classList.add('win')
+            else if (platform === 'linux') document.body.classList.add('linux')
+
+            const handleClose = () => window.electronAPI.windowControl.close()
+            const handleMin = () => window.electronAPI.windowControl.minimize()
+            const handleMax = () => window.electronAPI.windowControl.maximize()
+
+            // Attach listeners to both sets of buttons
+            const closeBtnMac = document.getElementById('close-btn-mac')
+            const minBtnMac = document.getElementById('min-btn-mac')
+            const maxBtnMac = document.getElementById('max-btn-mac')
+
+            if (closeBtnMac) closeBtnMac.addEventListener('click', handleClose)
+            if (minBtnMac) minBtnMac.addEventListener('click', handleMin)
+            if (maxBtnMac) maxBtnMac.addEventListener('click', handleMax)
+
+            const closeBtnWin = document.getElementById('close-btn-win')
+            const minBtnWin = document.getElementById('min-btn-win')
+            const maxBtnWin = document.getElementById('max-btn-win')
+
+            if (closeBtnWin) closeBtnWin.addEventListener('click', handleClose)
+            if (minBtnWin) minBtnWin.addEventListener('click', handleMin)
+            if (maxBtnWin) maxBtnWin.addEventListener('click', handleMax)
+
+            // Sidebar Resize & Toggle Logic
+            const resizer = document.getElementById('sidebar-resizer')
+            const sidebar = document.getElementById('main-sidebar')
+            const toggleMac = document.getElementById('sidebar-toggle-mac')
+            const toggleWin = document.getElementById('sidebar-toggle-win')
+            let isResizing = false
+            let lastWidth = 350
+
+            const updateToggleIcons = (collapsed) => {
+                const icon = collapsed ? 'keyboard_double_arrow_left' : 'keyboard_double_arrow_right'
+                if (toggleMac) toggleMac.querySelector('span').innerText = icon
+                if (toggleWin) toggleWin.querySelector('span').innerText = icon
+            }
+
+            const toggleSidebar = (collapse) => {
+                const willCollapse = collapse !== undefined ? collapse : !sidebar.classList.contains('collapsed')
+
+                if (willCollapse) {
+                    sidebar.classList.add('collapsed')
+                    sidebar.style.width = '0px'
+                } else {
+                    sidebar.classList.remove('collapsed')
+                    sidebar.style.width = `${lastWidth}px`
+                }
+                updateToggleIcons(sidebar.classList.contains('collapsed'))
+            }
+
+            if (toggleMac) toggleMac.addEventListener('click', () => toggleSidebar())
+            if (toggleWin) toggleWin.addEventListener('click', () => toggleSidebar())
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true
+                document.body.classList.add('resizing-active')
+                resizer.classList.add('resizing')
             })
-            document.getElementById('min-btn').addEventListener('click', () => {
-                window.electronAPI.windowControl.minimize()
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isResizing) return
+
+                const sidebarWidth = window.innerWidth - e.clientX
+                if (sidebarWidth > 200 && sidebarWidth < 600) {
+                    sidebar.style.width = `${sidebarWidth}px`
+                    lastWidth = sidebarWidth
+                }
             })
-            document.getElementById('max-btn').addEventListener('click', () => {
-                window.electronAPI.windowControl.maximize()
+
+            window.addEventListener('mouseup', () => {
+                isResizing = false
+                document.body.classList.remove('resizing-active')
+                resizer.classList.remove('resizing')
             })
 
             // Incognito Mode

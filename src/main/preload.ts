@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld('electronAPI', {
+    platform: process.platform,
     requestData: () => ipcRenderer.send('request-data'),
     onData: (callback: (data: any) => void) => ipcRenderer.on('response-data', (_, data) => callback(data)),
     windowControl: {

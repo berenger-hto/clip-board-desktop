@@ -32,7 +32,7 @@ app.whenReady().then(async () => {
     const win = createWindow()
     UserService.createUniqueUserToken()
 
-    tray = new Tray(join(__dirname, "icon.jpg"))
+    tray = new Tray(join(__dirname, "icon.png"))
 
     const contextMenu = Menu.buildFromTemplate([
         {

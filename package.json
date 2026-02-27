@@ -6,7 +6,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build:css": "tailwindcss -i ./src/renderer/assets/css/styles.css -o ./src/renderer/assets/css/output.css --minify",
-    "build": "npm run build:css && tsc && cpx \"src/renderer/**/*\" dist/renderer && cpx \"src/main/icon.jpg\" dist/main",
+    "build": "npm run build:css && tsc && cpx \"src/renderer/**/*\" dist/renderer && cpx \"src/main/icon.png\" dist/main",
     "dev": "npm run build && electron . --no-sandbox --disable-setuid-sandbox"
   },
   "keywords": [],
