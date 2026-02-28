@@ -2,6 +2,13 @@
 <html class="dark" lang="fr">
 
 <head>
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ClipboardX</title>
@@ -23,7 +30,6 @@
         #skeleton-loader {
             position: fixed;
             inset: 0;
-            background: #0a0510;
             z-index: 9999;
             opacity: 1;
             transition: opacity 0.3s ease-out;
@@ -172,7 +178,7 @@
     class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display h-screen flex flex-col overflow-hidden transition-colors duration-300">
 
     <!-- Skeleton Loader -->
-    <div id="skeleton-loader">
+    <div id="skeleton-loader" class="bg-background-light dark:bg-background-dark">
         <!-- Titlebar Skeleton -->
         <div class="h-10 flex items-center justify-between px-4 border-b border-primary/10">
             <div class="flex items-center gap-2">
@@ -230,18 +236,28 @@
             <button id="max-btn-mac"
                 class="w-3.5 h-3.5 rounded-full bg-mac-maximize border border-black/10 flex items-center justify-center group hover:opacity-80 duration-200">
             </button>
+            <div class="w-px h-10 bg-black/10 dark:bg-white/5 mx-2"></div>
+            <button
+                class="theme-toggle-btn p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/5 text-slate-500 hover:text-primary transition-all"
+                title="Changer de thème">
+                <span class="material-icons-outlined text-[18px]">light_mode</span>
+            </button>
             <button id="sidebar-toggle-mac"
-                class="ml-4 p-1 rounded-md hover:bg-white/5 text-slate-500 hover:text-primary transition-all">
+                class="ml-2 p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/5 text-slate-500 hover:text-primary transition-all">
                 <span class="material-icons-outlined text-[18px]">keyboard_double_arrow_right</span>
             </button>
         </div>
 
         <!-- Windows/Linux Controls -->
         <div id="win-controls" class="win-controls flex items-center h-full z-10 no-drag">
+            <button class="theme-toggle-btn win-btn" title="Changer de thème">
+                <span class="material-icons-outlined">light_mode</span>
+            </button>
+            <div class="w-px h-6 bg-black/10 dark:bg-white/10 mx-1 my-auto"></div>
             <button id="sidebar-toggle-win" class="win-btn">
                 <span class="material-icons-outlined">keyboard_double_arrow_right</span>
             </button>
-            <div class="w-px h-10 bg-white/5 mx-1"></div>
+            <div class="w-px h-10 bg-black/10 dark:bg-white/5 mx-1"></div>
             <button id="min-btn-win" class="win-btn">
                 <span class="material-icons-outlined">remove</span>
             </button>
@@ -537,6 +553,33 @@
                 const isIncognito = await window.electronAPI.toggleIncognito()
                 updateIncognitoUI(isIncognito)
             })
+
+            // Theme Toggle Logic
+            const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+            const htmlEl = document.documentElement;
+
+            const updateThemeIcons = () => {
+                const iconName = htmlEl.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+                themeToggleBtns.forEach(btn => {
+                    const icon = btn.querySelector('.material-icons-outlined');
+                    if (icon) icon.innerText = iconName;
+                });
+            };
+
+            updateThemeIcons();
+
+            themeToggleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (htmlEl.classList.contains('dark')) {
+                        htmlEl.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        htmlEl.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                    updateThemeIcons();
+                });
+            });
 
             setTimeout(() => {
                 const loader = document.getElementById('skeleton-loader')

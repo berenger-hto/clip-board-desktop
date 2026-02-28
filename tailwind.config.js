@@ -8,7 +8,7 @@ module.exports = {
         extend: {
             colors: {
                 "primary": "#7c3aed",
-                "background-light": "#f5f7f8",
+                "background-light": "#e2e8f0",
                 "background-dark": "#0a0510",
                 "mac-close": "#ff5f57",
                 "mac-minimize": "#ffbd2e",
