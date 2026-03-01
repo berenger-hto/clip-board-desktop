@@ -4,7 +4,7 @@ import { Data } from "../../types/types"
 const db = new DB()
 
 export class ClipboardModel {
-    public async getData(limit: number) {
+    public async getData(limit?: number) {
         const data = await db.get({ info: "clipboard" }, { limit, order: "DESC" })
         return data ? data.map(d => ({
             id: d._id,

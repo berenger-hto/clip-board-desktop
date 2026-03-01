@@ -4,6 +4,7 @@ import { ClipboardModel } from "../server/model/Clipboard.model";
 import { Notification } from "electron";
 import { io } from "../server/hono";
 import clipboard from "clipboardy";
+import type { FilterItem } from "../types/types";
 
 const db = new DB()
 const clipboardModel = new ClipboardModel()
@@ -55,6 +56,10 @@ export class ClipboardService {
         return await clipboardModel.getData(limit)
     }
 
+    public static async getAllDataToDB() {
+        return await clipboardModel.getData()
+    }
+
     public static async getOneData(id: string) {
         return await clipboardModel.getOneData(id)
     }
@@ -81,5 +86,13 @@ export class ClipboardService {
                 body: "Erreur lors de l'écriture dans le presse-papier"
             }).show()
         }
+    }
+
+    public static async find(searchItem: string) {
+        return await db.find({ searchItem })
+    }
+
+    public static async findWithFilter(filterItem: FilterItem) {
+        return await db.find({ filterItem })
     }
 }

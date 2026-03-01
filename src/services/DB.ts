@@ -1,6 +1,7 @@
 import Datastore from "@seald-io/nedb"
 import { dbPath } from "../constants/baseDir"
-import { Data, Option } from "../types/types"
+import { Data, Option, FilterItem } from "../types/types"
+import { escapeRegExp } from "../functions/escapeRegExp"
 
 export class DB {
     private static instance: Datastore | null = null
@@ -97,6 +98,20 @@ export class DB {
             return numAffected > 0
         } catch (e) {
             console.error("Erreur lors de la mise à jour dans la base de donnée : " + (e as Error).message)
+            process.kill(process.pid, 'SIGINT')
+        }
+    }
+
+    async find({ searchItem, filterItem }: { searchItem?: string, filterItem?: FilterItem }) {
+        const db = await this.loadDB()
+        try {
+            const content = new RegExp(escapeRegExp(searchItem || ""), 'i')
+            return await db.find({
+                info: "clipboard",
+                ...(filterItem ? { type: filterItem } : { content })
+            })
+        } catch (e) {
+            console.error("Erreur lors de la recherche dans la base de donnée : " + (e as Error).message)
             process.kill(process.pid, 'SIGINT')
         }
     }

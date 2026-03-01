@@ -16,3 +16,5 @@ export type MobileDevice = {
     deviceOSName?: string
     deviceOSVersion?: string
 }
+
+export type FilterItem = "TEXT" | "CODE" | "URL"

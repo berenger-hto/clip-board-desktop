@@ -50,6 +50,9 @@ hono.get(prefix + 'clipboard/:id', Secure.authorize, ClipboardController.oneClip
 hono.post(prefix + 'clipboard', Secure.authorize, ClipboardController.addData)
 hono.patch(prefix + 'clipboard/:id', Secure.authorize, ClipboardController.updateData)
 hono.delete(prefix + 'clipboard/:id', Secure.authorize, ClipboardController.deleteData)
+hono.get(prefix + 'search', Secure.authorize, ClipboardController.findData)
+hono.get(prefix + 'all', Secure.authorize, ClipboardController.allClipboardData)
+hono.get(prefix + 'filter', Secure.authorize, ClipboardController.filterData)
 
 hono.notFound((c) => {
     return c.json({
