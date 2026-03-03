@@ -102,14 +102,24 @@ export class DB {
         }
     }
 
-    async find({ searchItem, filterItem }: { searchItem?: string, filterItem?: FilterItem }) {
+    async find({ searchItem, filterItemType }: { searchItem?: string, filterItemType?: FilterItem }, options?: Option) {
         const db = await this.loadDB()
         try {
             const content = new RegExp(escapeRegExp(searchItem || ""), 'i')
-            return await db.find({
+            let query = db.findAsync({
                 info: "clipboard",
-                ...(filterItem ? { type: filterItem } : { content })
+                ...(filterItemType ? { type: filterItemType } : { content })
             })
+
+            if (options?.order) {
+                query = query.sort({ updatedAt: options.order === "DESC" ? -1 : options.order === "ASC" ? 1 : 0 })
+            }
+
+            if (options?.limit) {
+                query = query.limit(options.limit)
+            }
+
+            return await query
         } catch (e) {
             console.error("Erreur lors de la recherche dans la base de donnée : " + (e as Error).message)
             process.kill(process.pid, 'SIGINT')

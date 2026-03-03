@@ -82,11 +82,11 @@ export class ClipboardController {
     public static async findData(c: Context) {
         const searchItem = c.req.query("q")
         if (!searchItem) {
-            throw new HTTPException(400, { message: "Aucun élément de recherche fourni" })
+            throw new HTTPException(400, { message: "Aucun élément de recherche n'a été fourni" })
         }
         const data = await ClipboardService.find(searchItem)
         if (!data || data.length === 0) {
-            throw new HTTPException(404, { message: "Aucune donnée disponible" })
+            throw new HTTPException(404, { message: "Aucun résultat" })
         }
 
         return c.json({ success: true, message: "Données trouvées", data })

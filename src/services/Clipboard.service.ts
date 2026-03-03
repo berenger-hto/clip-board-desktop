@@ -89,10 +89,10 @@ export class ClipboardService {
     }
 
     public static async find(searchItem: string) {
-        return await db.find({ searchItem })
+        return await clipboardModel.findData(searchItem)
     }
 
-    public static async findWithFilter(filterItem: FilterItem) {
-        return await db.find({ filterItem })
+    public static async findWithFilter(filterItemType: FilterItem) {
+        return await clipboardModel.findWithFilterData(filterItemType)
     }
 }

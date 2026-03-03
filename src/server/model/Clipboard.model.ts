@@ -1,5 +1,5 @@
 import { DB } from "../../services/DB"
-import { Data } from "../../types/types"
+import { Data, FilterItem } from "../../types/types"
 
 const db = new DB()
 
@@ -41,5 +41,27 @@ export class ClipboardModel {
             return false
         }
         return !!await db.update(_id, { content, type })
+    }
+
+    public async findData(searchItem: string) {
+        const data = await db.find({ searchItem }, { order: "DESC" })
+        return data ? data.map((d: Data) => ({
+            id: d._id,
+            type: d.type,
+            createdAt: (new Date(d.updatedAt).getTime()),
+            source: d.source,
+            value: d.content
+        })) : []
+    }
+
+    public async findWithFilterData(filterItemType: FilterItem) {
+        const data = await db.find({ filterItemType }, { order: "DESC" })
+        return data ? data.map((d: Data) => ({
+            id: d._id,
+            type: d.type,
+            createdAt: (new Date(d.updatedAt).getTime()),
+            source: d.source,
+            value: d.content
+        })) : []
     }
 } 
