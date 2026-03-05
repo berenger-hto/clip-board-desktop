@@ -2,7 +2,6 @@ import { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 import { ClipboardService } from "../../services/Clipboard.service";
-import { wait } from "../../functions/wait";
 import type { FilterItem } from "../../types/types";
 
 const addDataSchema = z.object({
@@ -39,10 +38,9 @@ export class ClipboardController {
 
     public static async oneClipboardData(c: Context) {
         const id = c.req.param("id")
-        // await wait()
         const data = await ClipboardService.getOneData(id)
         if (!data) {
-            throw new HTTPException(404, { message: "Donnée non trouvée" })
+            throw new HTTPException(404, { message: "Donnée non disponible" })
         }
         return c.json({ success: true, message: "Donnée récupérée", data })
     }
@@ -53,20 +51,19 @@ export class ClipboardController {
 
         await ClipboardService.addClipboardEntry(data.content, data.source, data.type)
 
-        return c.json({ success: true, message: "Données sauvegardées" })
+        return c.json({ success: true, message: "Sauvegardé" })
     }
 
     public static async updateData(c: Context) {
         const id = c.req.param("id")
         const body = await c.req.json()
         const data = updateDataSchema.parse(body)
-        // await wait(2000)
         const isUpdated = await ClipboardService.updateClipboardEntry(id, data.content, data.type)
         if (!isUpdated) {
             throw new HTTPException(404, { message: "Erreur lors de la mise à jour" })
         }
 
-        return c.json({ success: true, message: "Données mises à jour" })
+        return c.json({ success: true, message: "Mis à jour" })
     }
 
     public static async deleteData(c: Context) {
@@ -76,7 +73,7 @@ export class ClipboardController {
             throw new HTTPException(404, { message: "Erreur lors de la suppression" })
         }
 
-        return c.json({ success: true, message: "Données supprimées" })
+        return c.json({ success: true, message: "Supprimé" })
     }
 
     public static async findData(c: Context) {
