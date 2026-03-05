@@ -15,7 +15,7 @@ const updateDataSchema = z.object({
     type: z.string("Aucun type détecté").min(1).refine((value) => ["AUTO", "CODE", "TEXT", "URL"].includes(value), "Type invalide")
 })
 
-const filterItems = ["TEXT", "CODE", "URL"]
+const filterItems = ["TEXT", "CODE", "URL", "FAVORITES"]
 
 export class ClipboardController {
     public static async clipboardData(c: Context) {
@@ -81,6 +81,7 @@ export class ClipboardController {
         if (!searchItem) {
             throw new HTTPException(400, { message: "Aucun élément de recherche n'a été fourni" })
         }
+
         const data = await ClipboardService.find(searchItem)
         if (!data || data.length === 0) {
             throw new HTTPException(404, { message: "Aucun résultat" })
@@ -91,15 +92,33 @@ export class ClipboardController {
 
     public static async filterData(c: Context) {
         const filterItem = c.req.query("f") as FilterItem | undefined
-        if (!filterItem || !filterItems.includes(filterItem)) {
+        if (!filterItem) {
             throw new HTTPException(400, { message: "Aucun filtre fourni" })
         }
-        const data = await ClipboardService.findWithFilter(filterItem)
+
+        if (!filterItems.includes(filterItem)) {
+            throw new HTTPException(400, { message: "Type de filtre invalide" })
+        }
+        
+        const data =  filterItem !== "FAVORITES" ? 
+            await ClipboardService.findWithFilter(filterItem) : 
+            await ClipboardService.getFavorites()
+            
         if (!data || data.length === 0) {
             throw new HTTPException(404, { message: "Aucune donnée disponible" })
         }
         
         return c.json({ success: true, message: "Données filtrées", data })
+    }
+
+    public static async toggleFavorite(c: Context) {
+        const id = c.req.param("id")
+        const isToggled = await ClipboardService.toggleFavorite(id)
+        if (!isToggled) {
+            throw new HTTPException(404, { message: "Erreur lors du changement de favori" })
+        }
+        
+        return c.json({ success: true, message: "Favori changé" })
     }
 }
 

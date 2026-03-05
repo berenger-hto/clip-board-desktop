@@ -1,3 +1,4 @@
+import { formatData } from "../../functions/formatData"
 import { DB } from "../../services/DB"
 import { Data, FilterItem } from "../../types/types"
 
@@ -6,13 +7,7 @@ const db = new DB()
 export class ClipboardModel {
     public async getData(limit?: number) {
         const data = await db.get({ info: "clipboard" }, { limit, order: "DESC" })
-        return data ? data.map(d => ({
-            id: d._id,
-            type: d.type,
-            createdAt: (new Date(d.updatedAt).getTime()),
-            source: d.source,
-            value: d.content
-        })) : []
+        return data ? formatData(data) : []
     }
 
     public async getOneData(id: string) {
@@ -45,23 +40,24 @@ export class ClipboardModel {
 
     public async findData(searchItem: string) {
         const data = await db.find({ searchItem }, { order: "DESC" })
-        return data ? data.map((d: Data) => ({
-            id: d._id,
-            type: d.type,
-            createdAt: (new Date(d.updatedAt).getTime()),
-            source: d.source,
-            value: d.content
-        })) : []
+        return data ? formatData(data) : []
     }
 
     public async findWithFilterData(filterItemType: FilterItem) {
         const data = await db.find({ filterItemType }, { order: "DESC" })
-        return data ? data.map((d: Data) => ({
-            id: d._id,
-            type: d.type,
-            createdAt: (new Date(d.updatedAt).getTime()),
-            source: d.source,
-            value: d.content
-        })) : []
+        return data ? formatData(data) : []
+    }
+
+    public async getFavoriteData() {
+        const data = await db.find({ favorite: true }, { order: "DESC" })
+        return data ? formatData(data) : []
+    }
+
+    public async toggleFavoriteData(_id: string) {
+        const data = await db.get({ _id })
+        if (!data || data.length === 0) {
+            return false
+        }
+        return !!await db.update(_id, { favorite: !data[0].favorite })
     }
 } 

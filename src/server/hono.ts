@@ -53,6 +53,7 @@ hono.delete(prefix + 'clipboard/:id', Secure.authorize, ClipboardController.dele
 hono.get(prefix + 'search', Secure.authorize, ClipboardController.findData)
 hono.get(prefix + 'all', Secure.authorize, ClipboardController.allClipboardData)
 hono.get(prefix + 'filter', Secure.authorize, ClipboardController.filterData)
+hono.patch(prefix + 'favorite/:id', Secure.authorize, ClipboardController.toggleFavorite)
 
 hono.notFound((c) => {
     return c.json({

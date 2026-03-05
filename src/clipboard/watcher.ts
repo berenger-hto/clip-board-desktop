@@ -1,4 +1,4 @@
-import clipboard from "clipboardy"
+import { clipboard } from "electron"
 import { setInterval } from "node:timers"
 import { ClipboardService } from "../services/Clipboard.service"
 import { store } from "../store"
@@ -14,12 +14,12 @@ export async function watcher() {
 
     setInterval(async () => {
         if (store.isIncognito) {
-            lastContent = await clipboard.read()
+            lastContent = clipboard.readText()
             return
         }
 
         try {
-            const currentContent = await clipboard.read()
+            const currentContent = clipboard.readText()
 
             if (!currentContent || currentContent === lastContent) {
                 return

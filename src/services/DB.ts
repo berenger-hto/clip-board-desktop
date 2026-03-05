@@ -1,5 +1,5 @@
 import Datastore from "@seald-io/nedb"
-import { dbPath } from "../constants/baseDir"
+import { getDbPath } from "../constants/baseDir"
 import { Data, Option, FilterItem } from "../types/types"
 import { escapeRegExp } from "../functions/escapeRegExp"
 
@@ -18,7 +18,7 @@ export class DB {
 
         DB.loadingPromise = (async () => {
             const db = new Datastore({
-                filename: dbPath,
+                filename: getDbPath(),
                 autoload: true,
                 timestampData: true
             })
@@ -102,13 +102,14 @@ export class DB {
         }
     }
 
-    async find({ searchItem, filterItemType }: { searchItem?: string, filterItemType?: FilterItem }, options?: Option) {
+    async find({ searchItem, filterItemType, favorite }: { searchItem?: string, filterItemType?: FilterItem, favorite?: boolean }, options?: Option) {
         const db = await this.loadDB()
         try {
             const content = new RegExp(escapeRegExp(searchItem || ""), 'i')
             let query = db.findAsync({
                 info: "clipboard",
-                ...(filterItemType ? { type: filterItemType } : { content })
+                ...(filterItemType ? { type: filterItemType } : { content }),
+                ...(favorite !== undefined && { favorite })
             })
 
             if (options?.order) {

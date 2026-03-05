@@ -1,9 +1,8 @@
 import { DB } from "./DB";
 import { contentType } from "../functions/detectContentType";
 import { ClipboardModel } from "../server/model/Clipboard.model";
-import { Notification } from "electron";
+import { Notification, clipboard } from "electron";
 import { io } from "../server/hono";
-import clipboard from "clipboardy";
 import type { FilterItem } from "../types/types";
 
 const db = new DB()
@@ -18,7 +17,7 @@ export class ClipboardService {
 
         const exist = await this.contentExist(content)
         if (!exist) {
-            await clipboardModel.insertData({ info: "clipboard", content, type, source })
+            await clipboardModel.insertData({ info: "clipboard", content, type, source, favorite: false })
         }
 
         io.emit("clipboard", true)
@@ -79,7 +78,7 @@ export class ClipboardService {
 
     public static async writeToClipboard(content: string) {
         try {
-            await clipboard.write(content)
+            clipboard.writeText(content)
         } catch {
             new Notification({
                 title: "ClipboardX",
@@ -94,5 +93,17 @@ export class ClipboardService {
 
     public static async findWithFilter(filterItemType: FilterItem) {
         return await clipboardModel.findWithFilterData(filterItemType)
+    }
+
+    public static async getFavorites() {
+        return await clipboardModel.getFavoriteData()
+    }
+
+    public static async toggleFavorite(id: string) {
+        const isToggled = await clipboardModel.toggleFavoriteData(id)
+        if (isToggled) {
+            io.emit("clipboard", true)
+        }
+        return isToggled
     }
 }

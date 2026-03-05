@@ -1,4 +1,4 @@
-export type Data = Record<string, string | number>
+export type Data = Record<string, string | number | boolean>
 
 export type Option = {
     limit?: number
@@ -17,4 +17,4 @@ export type MobileDevice = {
     deviceOSVersion?: string
 }
 
-export type FilterItem = "TEXT" | "CODE" | "URL"
+export type FilterItem = "TEXT" | "CODE" | "URL" | "FAVORITES"
