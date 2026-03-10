@@ -641,8 +641,10 @@
             })
 
             socket.on("device:connected", () => {
-                document.querySelector("#devices-list").innerHTML = ""
-                loadDevices()
+                setTimeout(() => {
+                    document.querySelector("#devices-list").innerHTML = ""
+                    loadDevices()
+                }, 500)
             })
 
             socket.on("clipboard", () => {

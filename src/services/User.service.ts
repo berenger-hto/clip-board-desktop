@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto"
 import { UserModel } from "../server/model/User.model"
-import { type BrowserWindow } from "electron"
 
 const userModel = new UserModel()
 

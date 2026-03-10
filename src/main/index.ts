@@ -1,8 +1,8 @@
 import { serve } from '@hono/node-server';
 import { app, BrowserWindow, ipcMain, Tray, Menu, Notification, clipboard } from 'electron';
+import { join } from 'node:path';
 import { hono, setupSocket } from '../server/hono';
 import { watcher } from '../clipboard/watcher';
-import { join } from 'node:path';
 import { UserService } from '../services/User.service';
 import { ClipboardService } from '../services/Clipboard.service';
 import { store } from '../store';
@@ -19,7 +19,7 @@ const createWindow = () => {
     })
 
     win.loadFile(join(__dirname, "..", "renderer", "index.html"))
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 
     return win
 }
@@ -28,8 +28,9 @@ let tray
 let isQuiting = false
 
 app.whenReady().then(async () => {
-    const win = createWindow()
+    app.setName('clip-board-x')
     UserService.createUniqueUserToken()
+    const win = createWindow()
 
     tray = new Tray(join(__dirname, "icon.png"))
 
@@ -57,8 +58,6 @@ app.whenReady().then(async () => {
             win.hide()
         }
     })
-
-    // On peut utiliser les sockets pour vérifier quand le téléphone envoie une donnée dans le clipboard
 
     const server = serve({
         fetch: hono.fetch,
