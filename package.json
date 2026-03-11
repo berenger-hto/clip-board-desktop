@@ -25,14 +25,15 @@
     ],
     "win": {
       "target": "portable",
-      "icon": "dist/main/icon.png"
+      "icon": "build/icon.png"
     },
     "linux": {
       "target": [
         "AppImage",
         "deb"
       ],
-      "category": "Utility"
+      "category": "Utility",
+      "icon": "build/icon.png"
     }
   },
   "keywords": [],
