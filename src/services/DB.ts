@@ -2,6 +2,7 @@ import Datastore from "@seald-io/nedb"
 import { getDbPath } from "../constants/baseDir"
 import { Data, Option, FilterItem } from "../types/types"
 import { escapeRegExp } from "../functions/escapeRegExp"
+import { Notification } from "electron"
 
 export class DB {
     private static instance: Datastore | null = null

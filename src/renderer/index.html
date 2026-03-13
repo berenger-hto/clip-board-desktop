@@ -288,21 +288,48 @@
                     <span
                         class="material-icons-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">search</span>
                     <input
-                        class="w-full bg-slate-200/50 dark:bg-primary/5 border-transparent focus:border-primary/30 focus:ring-0 rounded-xl py-4 pl-12 pr-4 text-sm outline-none"
-                        placeholder="Rechercher..." type="text" />
+                        class="w-full bg-slate-300/40 dark:bg-primary/5 border-transparent focus:border-primary/30 focus:ring-0 rounded-xl py-4 pl-12 pr-4 text-sm outline-none"
+                        placeholder="Rechercher dans l'historique..." type="search" id="search-input" />
+                </div>
+            </div>
+
+            <div id="filter-buttons" class="flex gap-3 items-center justify-start py-4 px-8">
+                <button data-filter="ALL"
+                    class="flex items-center gap-2 px-6 py-2.5 bg-primary text-white hover:opacity-75 text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30">
+                    Tout
+                </button>
+                <button data-filter="CODE"
+                    class="flex items-center gap-2 px-6 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30">
+                    Code
+                </button>
+                <button data-filter="URL"
+                    class="flex items-center gap-2 px-6 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30">
+                    URL
+                </button>
+                <button data-filter="TEXT"
+                    class="flex items-center gap-2 px-6 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30">
+                    Texte
+                </button>
+                <div class="border-l-2 border-primary/20 px-3">
+                    <button data-filter="FAVORITES"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30">
+                        <span class="material-symbols-outlined">kid_star</span>
+                        Favoris
+                    </button>
                 </div>
             </div>
 
             <div id="clipboard-list" class="flex-1 overflow-y-auto px-8 pb-8 space-y-4">
                 <template>
-                    <div
-                        class="clipboard-tile group relative bg-white dark:bg-primary/5 border border-primary/5 rounded-xl p-5 transition-all shadow-sm">
+                    <div class="clipboard-tile group relative bg-white dark:bg-primary/5 border border-primary/5 rounded-xl p-5 transition-all shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-white/10 text-slate-500 uppercase font-bold tracking-wider">Code</span>
+                        </div>
+                        
                         <div class="flex justify-between items-start mb-2">
-                            <pre
-                                class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">git commit -m "feat: implement mobile sync"</pre>
+                            <pre class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">git commit -m "feat: implement mobile sync"</pre>
                             <div class="tile-actions opacity-0 transition-opacity flex gap-2 no-drag">
-                                <button
-                                    class="p-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
+                                <button class="p-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
                                     <span class="material-icons-outlined">content_copy</span>
                                 </button>
                                 <button
@@ -432,6 +459,10 @@
             }
 
             generateQRCode()
+
+            setTimeout(() => {
+                generateQRCode()
+            }, 2000)
 
             document.querySelector("#refresh-qr").addEventListener("click", generateQRCode)
 
@@ -592,13 +623,71 @@
             const loadClipboardData = () => {
                 window.electronAPI.clipboardData().then(data => {
                     const clipboardList = document.querySelector("#clipboard-list")
+                    clipboardList.innerHTML = ""
                     for (const d of data) {
                         const dataObj = new Data(d)
                         clipboardList.appendChild(dataObj.append())
                     }
-                    console.log(data)
                 })
             }
+
+            const loadClipboardDataWithFilter = (filterItemType) => {
+                window.electronAPI.findWithFilter(filterItemType).then(data => {
+                    const clipboardList = document.querySelector("#clipboard-list")
+                    clipboardList.innerHTML = ""
+                    for (const d of data) {
+                        const dataObj = new Data(d)
+                        clipboardList.appendChild(dataObj.append())
+                    }
+                })
+            }
+
+            const buttonStyles = {
+                active: "flex items-center gap-2 px-6 py-2.5 bg-primary text-white hover:opacity-75 text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30",
+                disabled: "flex items-center gap-2 px-6 py-2.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-sm font-semibold rounded-full transition-all disabled:cursor-not-allowed disabled:opacity-30"
+            } 
+
+            const filterButtons = document.querySelectorAll("#filter-buttons button")
+
+            function removeClassName(elements, className) {
+                elements.forEach(element => {
+                    element.className = ""
+                })
+
+                elements.forEach(btn => {
+                    btn.className = buttonStyles.disabled
+                })
+            }
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const filterItemType = btn.dataset.filter
+                    removeClassName(filterButtons, buttonStyles.active)
+                    btn.className = buttonStyles.active
+                    document.querySelector("#search-input").value = ""
+                    if (filterItemType === "ALL") return loadClipboardData()
+                    loadClipboardDataWithFilter(filterItemType)
+                })
+            })
+
+            const loadClipboardDataWithSearch = (searchTerm) => {
+                window.electronAPI.findWithSearch(searchTerm).then(data => {
+                    const clipboardList = document.querySelector("#clipboard-list")
+                    clipboardList.innerHTML = ""
+                    for (const d of data) {
+                        const dataObj = new Data(d)
+                        clipboardList.appendChild(dataObj.append())
+                    }
+                })
+            }
+
+            document.querySelector("#search-input").addEventListener("input", (e) => {
+                const searchTerm = e.target.value
+                removeClassName(filterButtons, buttonStyles.active)
+                filterButtons[0].className = buttonStyles.active
+                if (searchTerm === "") return loadClipboardData()
+                loadClipboardDataWithSearch(searchTerm)
+            })
 
             const loadDevices = () => {
                 window.electronAPI.getDevices().then(devices => {

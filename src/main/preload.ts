@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { FilterItem } from "../types/types";
 
 contextBridge.exposeInMainWorld('electronAPI', {
     platform: process.platform,
@@ -16,5 +17,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     deleteData: (id: string) => ipcRenderer.invoke('delete-data', id),
     getDevices: () => ipcRenderer.invoke('get-devices'),
     deleteAll: () => ipcRenderer.invoke('delete-all'),
-    writeToClipboard: (content: string) => ipcRenderer.invoke('write-to-clipboard', content)
+    writeToClipboard: (content: string) => ipcRenderer.invoke('write-to-clipboard', content),
+    findWithFilter: (filterItemType: FilterItem) => ipcRenderer.invoke('find-with-filter', filterItemType),
+    findWithSearch: (searchTerm: string) => ipcRenderer.invoke('find-with-search', searchTerm)
 })

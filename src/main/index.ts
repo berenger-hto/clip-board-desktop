@@ -7,6 +7,7 @@ import { UserService } from '../services/User.service';
 import { ClipboardService } from '../services/Clipboard.service';
 import { store } from '../store';
 import { getDevices } from '../services/Device.service';
+import type { FilterItem } from '../types/types';
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -135,6 +136,14 @@ app.whenReady().then(async () => {
 
     ipcMain.handle("write-to-clipboard", async (_, content: string) => {
         await ClipboardService.writeToClipboard(content)
+    })
+
+    ipcMain.handle("find-with-filter", async (_, filterItemType: FilterItem) => {
+        return await ClipboardService.findWithFilter(filterItemType)
+    })
+
+    ipcMain.handle("find-with-search", async (_, searchTerm: string) => {
+        return await ClipboardService.find(searchTerm)
     })
 
     await watcher()
