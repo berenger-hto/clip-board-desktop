@@ -19,5 +19,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     deleteAll: () => ipcRenderer.invoke('delete-all'),
     writeToClipboard: (content: string) => ipcRenderer.invoke('write-to-clipboard', content),
     findWithFilter: (filterItemType: FilterItem) => ipcRenderer.invoke('find-with-filter', filterItemType),
-    findWithSearch: (searchTerm: string) => ipcRenderer.invoke('find-with-search', searchTerm)
+    findWithSearch: (searchTerm: string) => ipcRenderer.invoke('find-with-search', searchTerm),
+    toggleFavorite: (id: string) => ipcRenderer.invoke('toggle-favorite', id)
 })

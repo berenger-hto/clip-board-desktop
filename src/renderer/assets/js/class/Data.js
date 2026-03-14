@@ -34,12 +34,12 @@ class Data {
                     <div class="flex-1 min-w-0">
                         <pre class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap break-all overflow-hidden value"></pre>
                     </div>
-                    <div class="tile-actions opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 no-drag shrink-0 absolute top-0 right-0 p-5 bg-white dark:bg-primary/5 rounded-xl">
+                    <div class="tile-actions opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 no-drag shrink-0 absolute top-0 right-0 p-5 rounded-xl">
                         <button class="copy p-2 bg-blue-500/10 hover:bg-blue-500 text-blue-500 hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
                             <span class="material-icons-outlined">content_copy</span>
                         </button>
-                        <button class="copy p-2 bg-[#FFD700]/10 hover:bg-[#FFD700] text-[#FFD700] hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
+                        <button class="favorite p-2 bg-[#FFD700]/10 hover:bg-[#FFD700] text-[#FFD700] hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
                         </button>
                         <button class="delete p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg h-10 w-10 flex items-center justify-center">
                             <span class="material-icons-outlined">delete</span>
@@ -55,11 +55,12 @@ class Data {
         el.querySelector(".createdAt").innerText = timeAgo(this.createdAt);
         el.querySelector(".content-type").innerText = this.type;
         if (this.isFavorite) {
-            el.querySelector(".content-type").parentElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>`
+            el.querySelector(".content-type").parentElement.insertAdjacentHTML('beforeend', `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-icon lucide-star"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>`)
         }
         el.querySelector(".delete").addEventListener("click", async (e) => {
             e.stopPropagation()
             await window.electronAPI.deleteData(this.id)
+            changeButtonState(document.querySelector("#filter-buttons button"))
             el.remove()
         })
 
@@ -67,6 +68,12 @@ class Data {
             e.stopPropagation()
             await window.electronAPI.writeToClipboard(this.value)
             Toast.show("Copié dans le presse-papier", "success")
+        })
+
+        el.querySelector(".favorite").addEventListener("click", async (e) => {
+            e.stopPropagation()
+            await window.electronAPI.toggleFavorite(this.id)
+            changeButtonState(document.querySelector("#filter-buttons button"))
         })
 
         return el;

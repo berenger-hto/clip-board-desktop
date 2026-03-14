@@ -106,4 +106,9 @@ export class ClipboardService {
         }
         return isToggled
     }
+
+    public static async findWithFilterDesktop(filterItemType: FilterItem) {
+        if (filterItemType === "FAVORITES") return await this.getFavorites()
+        return await this.findWithFilter(filterItemType)
+    }
 }
