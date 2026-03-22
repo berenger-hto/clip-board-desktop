@@ -8,7 +8,6 @@ import { ClipboardService } from '../services/Clipboard.service';
 import { store } from '../store';
 import { getDevices } from '../services/Device.service';
 import type { FilterItem } from '../types/types';
-import { createServer } from 'node:https';
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -63,14 +62,9 @@ app.whenReady().then(async () => {
 
     const server = serve({
         fetch: hono.fetch,
-        port: 9876,
-        createServer: createServer,
-        serverOptions: {
-            key: "",
-            cert: ""
-        }
+        port: 9876
     }, (info) => {
-        console.log(`Server is running on https://localhost:${info.port}`)
+        console.log(`Server is running on http://localhost:${info.port}`)
     })
 
     setupSocket(server)
@@ -145,11 +139,15 @@ app.whenReady().then(async () => {
     })
 
     ipcMain.handle("find-with-filter", async (_, filterItemType: FilterItem) => {
-        return await ClipboardService.findWithFilter(filterItemType)
+        return await ClipboardService.findWithFilterDesktop(filterItemType)
     })
 
     ipcMain.handle("find-with-search", async (_, searchTerm: string) => {
         return await ClipboardService.find(searchTerm)
+    })
+
+    ipcMain.handle("toggle-favorite", async (_, id) => {
+        return await ClipboardService.toggleFavorite(id)
     })
 
     await watcher()
