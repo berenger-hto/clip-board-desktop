@@ -16,7 +16,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(37, 140, 244, 0.2);
+    background: oklch(var(--primary) / 0.4);
     border-radius: 10px;
 }
 
@@ -37,4 +37,114 @@ pre {
 
 .no-drag {
     -webkit-app-region: no-drag;
+}
+
+@layer base {
+:root {
+  --background: 0.9900 0 0;
+  --foreground: 0 0 0;
+  --card: 1 0 0;
+  --card-foreground: 0 0 0;
+  --popover: 0.9900 0 0;
+  --popover-foreground: 0 0 0;
+  --primary: 0 0 0;
+  --primary-foreground: 1 0 0;
+  --secondary: 0.9400 0 0;
+  --secondary-foreground: 0 0 0;
+  --muted: 0.9700 0 0;
+  --muted-foreground: 0.4400 0 0;
+  --accent: 0.9400 0 0;
+  --accent-foreground: 0 0 0;
+  --destructive: 0.6300 0.1900 23.0300;
+  --destructive-foreground: 1 0 0;
+  --border: 0.9200 0 0;
+  --input: 0.9400 0 0;
+  --ring: 0 0 0;
+  --chart-1: 0.8100 0.1700 75.3500;
+  --chart-2: 0.5500 0.2200 264.5300;
+  --chart-3: 0.7200 0 0;
+  --chart-4: 0.9200 0 0;
+  --chart-5: 0.5600 0 0;
+  --sidebar: 0.9900 0 0;
+  --sidebar-foreground: 0 0 0;
+  --sidebar-primary: 0 0 0;
+  --sidebar-primary-foreground: 1 0 0;
+  --sidebar-accent: 0.9400 0 0;
+  --sidebar-accent-foreground: 0 0 0;
+  --sidebar-border: 0.9400 0 0;
+  --sidebar-ring: 0 0 0;
+  --font-sans: Geist, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Geist Mono, monospace;
+  --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 1px;
+  --shadow-blur: 2px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.18;
+  --shadow-color: hsl(0 0% 0%);
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
+  --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
+  --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
+  --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: 0 0 0;
+  --foreground: 1 0 0;
+  --card: 0.1400 0 0;
+  --card-foreground: 1 0 0;
+  --popover: 0.1800 0 0;
+  --popover-foreground: 1 0 0;
+  --primary: 1 0 0;
+  --primary-foreground: 0 0 0;
+  --secondary: 0.2500 0 0;
+  --secondary-foreground: 1 0 0;
+  --muted: 0.2300 0 0;
+  --muted-foreground: 0.7200 0 0;
+  --accent: 0.3200 0 0;
+  --accent-foreground: 1 0 0;
+  --destructive: 0.6900 0.2000 23.9100;
+  --destructive-foreground: 0 0 0;
+  --border: 0.2600 0 0;
+  --input: 0.3200 0 0;
+  --ring: 0.7200 0 0;
+  --chart-1: 0.8100 0.1700 75.3500;
+  --chart-2: 0.5800 0.2100 260.8400;
+  --chart-3: 0.5600 0 0;
+  --chart-4: 0.4400 0 0;
+  --chart-5: 0.9200 0 0;
+  --sidebar: 0.1800 0 0;
+  --sidebar-foreground: 1 0 0;
+  --sidebar-primary: 1 0 0;
+  --sidebar-primary-foreground: 0 0 0;
+  --sidebar-accent: 0.3200 0 0;
+  --sidebar-accent-foreground: 1 0 0;
+  --sidebar-border: 0.3200 0 0;
+  --sidebar-ring: 0.7200 0 0;
+  --font-sans: Geist, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Geist Mono, monospace;
+  --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 1px;
+  --shadow-blur: 2px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.18;
+  --shadow-color: hsl(0 0% 0%);
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
+  --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
+  --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
+  --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
+  --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
+  --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
+}
 }

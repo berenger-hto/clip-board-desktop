@@ -14,7 +14,7 @@ class Toast {
     create() {
         const el = document.createElement("div");
 
-        let baseClasses = "fixed bottom-4 right-4 max-w-sm rounded-[14px] px-5 py-3.5 bg-slate-900 text-white shadow-xl transition-all duration-300 transform translate-y-full opacity-0 z-50 flex items-center gap-3 border border-white/10";
+        let baseClasses = "fixed bottom-4 right-4 max-w-sm rounded-[14px] px-5 py-3.5 bg-popover text-popover-foreground shadow-xl transition-all duration-300 transform translate-y-full opacity-0 z-50 flex items-center gap-3 border border-border";
 
         const icons = {
             success: "check_circle",

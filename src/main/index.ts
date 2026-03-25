@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import { app, BrowserWindow, ipcMain, Tray, Menu, Notification, clipboard } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, Notification, clipboard, nativeImage } from 'electron';
 import { join } from 'node:path';
 import { hono, setupSocket } from '../server/hono';
 import { watcher } from '../clipboard/watcher';
@@ -33,7 +33,8 @@ app.whenReady().then(async () => {
     UserService.createUniqueUserToken()
     const win = createWindow()
 
-    tray = new Tray(join(__dirname, "icon.png"))
+    const icon = nativeImage.createFromPath(join(__dirname, "icon.png")).resize({ width: 32, height: 32, quality: "best" })
+    tray = new Tray(icon)
 
     const contextMenu = Menu.buildFromTemplate([
         {
