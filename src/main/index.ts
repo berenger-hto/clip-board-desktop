@@ -67,8 +67,16 @@ if (gotTheLock) {
             }
         ])
 
-        tray.setToolTip("Clipboard App")
+        tray.setToolTip("ClipboardX App")
         tray.setContextMenu(contextMenu)
+
+        tray.on('click', () => {
+            if (win) {
+                if (win.isMinimized()) win.restore()
+                win.show()
+                win.focus()
+            }
+        })
 
         win.on("close", (event) => {
             if (!isQuiting) {
