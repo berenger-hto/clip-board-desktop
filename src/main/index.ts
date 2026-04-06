@@ -8,6 +8,7 @@ import { ClipboardService } from '../services/Clipboard.service';
 import { store } from '../store';
 import { getDevices } from '../services/Device.service';
 import type { FilterItem } from '../types/types';
+import { NetworkService } from '../services/Network.service';
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -174,6 +175,10 @@ if (gotTheLock) {
 
         ipcMain.handle("toggle-favorite", async (_, id) => {
             return await ClipboardService.toggleFavorite(id)
+        })
+
+        ipcMain.handle("network-interfaces", () => {
+            return NetworkService.getInterfaces()
         })
 
         await watcher()

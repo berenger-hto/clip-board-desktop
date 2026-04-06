@@ -18,3 +18,10 @@ export type MobileDevice = {
 }
 
 export type FilterItem = "TEXT" | "CODE" | "URL" | "FAVORITES"
+
+export type NetworkInterface = {
+    interface: string
+    ip: string
+    mac: string
+    netmask: string
+}
