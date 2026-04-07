@@ -20,6 +20,14 @@ export class NetworkService {
             }
         }
 
+        if (interfaces.length === 0) return null
+
         return interfaces
+    }
+
+    public static getAllIp() {
+        const interfaces = this.getInterfaces()
+        if (!interfaces) return null
+        return interfaces.map(i => i.ip)
     }
 }

@@ -351,7 +351,8 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex flex-col">
                     <h2 class="text-xl font-bold">Paramètres Réseau</h2>
-                    <p class="text-sm font-semibold">Sélectionnez l'interface réseau à utiliser pour la synchronisation avec votre mobile.</p>
+                    <p class="text-sm font-semibold">Sélectionnez l'interface réseau à utiliser pour la synchronisation
+                        avec votre mobile.</p>
                 </div>
                 <button id="close-settings"
                     class="p-1.5 hover:bg-muted text-muted-foreground hover:text-foreground rounded-full transition-colors flex items-center justify-center absolute top-2 right-2">
@@ -392,14 +393,77 @@
                 </button>
                 <p class="text-[11px] text-muted-foreground text-center mt-4">
                     <span class="material-icons-outlined text-[14px] align-middle mr-1 italic">info</span>
-                    Vous pouvez revenir ici à tout moment via l'icône <span class="material-icons-outlined text-[14px] align-middle">settings</span> dans la barre de titre.
+                    Vous pouvez revenir ici à tout moment via l'icône <span
+                        class="material-icons-outlined text-[14px] align-middle">settings</span> dans la barre de titre.
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-loader"
+        class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background transition-opacity duration-500">
+        <div class="relative flex flex-col items-center gap-6">
+            <div class="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            <div class="flex flex-col items-center">
+                <h1 class="text-xl font-bold tracking-[0.2em] uppercase text-primary animate-pulse">ClipboardX</h1>
+                <p class="text-xs text-muted-foreground uppercase tracking-widest mt-2">Initialisation...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="no-network-overlay"
+        class="fixed inset-0 z-[100] items-center justify-center bg-background/95 backdrop-blur-xl hidden transition-all duration-200 opacity-0">
+        <div class="max-w-md w-full p-8 text-center space-y-6">
+            <div class="relative inline-block">
+                <div class="absolute inset-0 bg-destructive/20 blur-2xl rounded-full"></div>
+                <span class="material-icons-outlined text-7xl text-destructive relative">wifi_off</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-3xl font-bold tracking-tight">Oups ! Pas de réseau</h2>
+                <p class="text-muted-foreground text-lg leading-relaxed">
+                    ClipboardX a besoin d'une interface réseau compatible (IPv4) pour synchroniser vos données.
+                    Veuillez activer votre Wi-Fi ou brancher un câble Ethernet.
+                </p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="window.location.reload()"
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-2xl shadow-lg hover:bg-primary/90 transition-all transform hover:scale-105 active:scale-95">
+                    <span class="material-icons-outlined">refresh</span>
+                    Réessayer
+                </button>
+                <button onclick="window.close()"
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-destructive text-destructive-foreground font-semibold rounded-2xl shadow-lg hover:bg-destructive/90 transition-all transform hover:scale-105 active:scale-95">
+                    <span class="material-icons-outlined">close</span>
+                    Quitter
+                </button>
             </div>
         </div>
     </div>
 
     <script>
         window.addEventListener('DOMContentLoaded', async () => {
+            const loader = document.getElementById('app-loader');
+            const hideLoader = () => {
+                if (!loader) return;
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.classList.add('hidden'), 500);
+            };
+
+            const checkNetwork = async () => {
+                const interfaces = await window.electronAPI.networkInterfaces();
+                if (!interfaces) {
+                    hideLoader();
+                    const overlay = document.getElementById('no-network-overlay');
+                    overlay.classList.remove('hidden');
+                    overlay.classList.add('flex');
+                    setTimeout(() => overlay.classList.add('opacity-100'), 10);
+                    return false;
+                }
+                return true;
+            };
+
+            if (!await checkNetwork()) return;
+
             /*
             const getPrivateIP = () => new Promise((resolve) => {
                 const pc = new RTCPeerConnection({ iceServers: [] });
@@ -423,7 +487,7 @@
                 const savedIP = localStorage.getItem("selectedNetworkIP")
                 if (savedIP) return savedIP;
                 const interfaces = await window.electronAPI.networkInterfaces()
-                return interfaces[0]?.ip || '127.0.0.1'
+                return interfaces?.[0]?.ip ?? '127.0.0.1'
             }
 
             const generateQRCode = async () => {
@@ -485,6 +549,12 @@
 
             const openSettings = async () => {
                 localInterfaces = await window.electronAPI.networkInterfaces();
+
+                if (!localInterfaces) {
+                    Toast.show("Votre PC n'a aucune interface réseau compatible (IPv4) active.", "error");
+                    return;
+                }
+
                 interfaceSelect.innerHTML = "";
                 const currentSavedIP = localStorage.getItem("selectedNetworkIP");
                 let foundSaved = false;
@@ -550,10 +620,10 @@
 
             /*
             const hideQrBtn = document.querySelector("#hide-qr")
-
+ 
             hideQrBtn.addEventListener("click", () => {
                 const qrContainerBox = document.querySelector(".qr-container")
-
+ 
                 document.querySelector(".qr-container").classList.toggle("hidden")
                 if (qrContainerBox.classList.contains("hidden")) {
                     hideQrBtn.querySelector("span#title").innerText = "Afficher QR"
@@ -697,7 +767,7 @@
             });
 
             const loadClipboardData = () => {
-                window.electronAPI.clipboardData().then(data => {
+                return window.electronAPI.clipboardData().then(data => {
                     const clipboardList = document.querySelector("#clipboard-list")
                     clipboardList.innerHTML = ""
                     for (const d of data) {
@@ -749,7 +819,7 @@
             })
 
             const loadDevices = () => {
-                window.electronAPI.getDevices().then(devices => {
+                return window.electronAPI.getDevices().then(devices => {
                     const devicesList = document.querySelector("#devices-list")
                     if (devices.length > 0) {
                         for (const d of devices) {
@@ -812,6 +882,9 @@
                 socket = io(`http://${newIP}:${PORT}`);
                 setupSocketListeners();
             };
+
+            await Promise.all([loadDevices(), loadClipboardData(), new Promise(resolve => setTimeout(resolve, 500))]);
+            hideLoader();
         })
 
     </script>

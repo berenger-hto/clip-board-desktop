@@ -6,6 +6,7 @@ import { HTTPException } from "hono/http-exception";
 import { DeviceModel } from "../model/Device.model";
 import { Notification } from "electron";
 import { io } from "../hono";
+import { NetworkService } from "../../services/Network.service";
 
 const userModel = new UserModel()
 const deviceModel = new DeviceModel()
@@ -24,12 +25,14 @@ export class UserController {
         const body = await c.req.json()
         const data = dataSchema.parse(body)
 
-        const privateIp = Object.values(os.networkInterfaces())
-            .flat()
-            .find((details) => details?.family === "IPv4" && !details.internal)?.address
+        const ips = NetworkService.getAllIp()
 
-        if (privateIp !== data.ip) {
-            throw new HTTPException(401, { message: "Adresse IP invalide" })
+        if (!ips) {
+            throw new HTTPException(503, { message: "Aucun réseau détecté sur le PC" })
+        }
+
+        if (!ips.includes(data.ip)) {
+            throw new HTTPException(403, { message: "Utilisez le même réseau que le PC" })
         }
 
         const userToken = await userModel.getUserToken()
