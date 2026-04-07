@@ -766,25 +766,40 @@
                 });
             });
 
+            const renderClipboardList = (data, emptyMessage = "Votre historique est vide", subMessage = "Synchronisez votre mobile pour commencer") => {
+                const clipboardList = document.querySelector("#clipboard-list")
+                clipboardList.innerHTML = ""
+                
+                if (!data || data.length === 0) {
+                    clipboardList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-70">
+                            <div class="h-8 w-8 flex items-center justify-center relative">
+                                <span class="material-icons-outlined text-5xl text-muted-foreground">content_paste_off</span>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-sm font-semibold text-foreground">${emptyMessage}</p>
+                                <p class="text-[11px] text-muted-foreground">${subMessage}</p>
+                            </div>
+                        </div>
+                    `
+                    return
+                }
+
+                for (const d of data) {
+                    const dataObj = new Data(d)
+                    clipboardList.appendChild(dataObj.append())
+                }
+            }
+
             const loadClipboardData = () => {
                 return window.electronAPI.clipboardData().then(data => {
-                    const clipboardList = document.querySelector("#clipboard-list")
-                    clipboardList.innerHTML = ""
-                    for (const d of data) {
-                        const dataObj = new Data(d)
-                        clipboardList.appendChild(dataObj.append())
-                    }
+                    renderClipboardList(data)
                 })
             }
 
             const loadClipboardDataWithFilter = (filterItemType) => {
                 window.electronAPI.findWithFilter(filterItemType).then(data => {
-                    const clipboardList = document.querySelector("#clipboard-list")
-                    clipboardList.innerHTML = ""
-                    for (const d of data) {
-                        const dataObj = new Data(d)
-                        clipboardList.appendChild(dataObj.append())
-                    }
+                    renderClipboardList(data, "Aucun élément de ce type", "Réessayez avec un autre filtre")
                 })
             }
 
@@ -802,12 +817,7 @@
 
             const loadClipboardDataWithSearch = (searchTerm) => {
                 window.electronAPI.findWithSearch(searchTerm).then(data => {
-                    const clipboardList = document.querySelector("#clipboard-list")
-                    clipboardList.innerHTML = ""
-                    for (const d of data) {
-                        const dataObj = new Data(d)
-                        clipboardList.appendChild(dataObj.append())
-                    }
+                    renderClipboardList(data, "Aucun résultat trouvé", "Réessayez avec d'autres mots-clés")
                 })
             }
 
