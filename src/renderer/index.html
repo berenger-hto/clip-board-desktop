@@ -831,6 +831,7 @@
             const loadDevices = () => {
                 return window.electronAPI.getDevices().then(devices => {
                     const devicesList = document.querySelector("#devices-list")
+                    devicesList.innerHTML = ""
                     if (devices.length > 0) {
                         for (const d of devices) {
                             const deviceObj = new Device(d)
@@ -870,7 +871,6 @@
 
                 socket.on("device:connected", () => {
                     setTimeout(() => {
-                        document.querySelector("#devices-list").innerHTML = ""
                         loadDevices()
                     }, 500)
                 })
