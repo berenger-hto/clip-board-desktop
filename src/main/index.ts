@@ -10,11 +10,15 @@ import { getDevices } from '../services/Device.service';
 import type { FilterItem } from '../types/types';
 import { NetworkService } from '../services/Network.service';
 
+app.setName('ClipboardX')
+app.setAppUserModelId("com.clipboardx.app")
+
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 1500,
         height: 1000,
         titleBarStyle: "hidden",
+        icon: join(__dirname, "icon.png"),
         webPreferences: {
             preload: join(__dirname, "preload.js")
         }
@@ -46,7 +50,6 @@ if (gotTheLock) {
     })
 
     app.whenReady().then(async () => {
-        app.setName('clipboardx')
         UserService.createUniqueUserToken()
         const win = createWindow()
         mainWindow = win

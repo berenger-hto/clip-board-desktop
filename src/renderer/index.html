@@ -17,7 +17,7 @@
 
     <link href="./assets/css/output.css" rel="stylesheet" />
     <link href="./assets/css/fonts.css" rel="stylesheet" />
-    <script defer src="./assets/js/lib/qrcode.min.js"></script>
+    <script defer src="./assets/js/lib/qr-code-styling.js"></script>
     <script defer src="./assets/js/lib/socket.io.min.js"></script>
     <script defer src="./assets/js/class/Toast.js"></script>
     <script defer src="./assets/js/class/Data.js"></script>
@@ -124,6 +124,12 @@
 
         #toggle-sidebar-btn.collapsed {
             transform: rotate(180deg);
+        }
+
+        #qrcode canvas {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 12px;
         }
     </style>
 </head>
@@ -282,8 +288,8 @@
 
             <div class="p-8 flex flex-col items-center justify-center">
                 <div
-                    class="qr-container bg-white p-2 rounded-2xl shadow-xl mb-6 no-drag flex items-center justify-center overflow-hidden">
-                    <div id="qrcode" class="bg-white"></div>
+                    class="qr-container bg-white p-2 rounded-2xl shadow-xl mb-6 no-drag flex items-center justify-center overflow-hidden w-full max-w-[250px] aspect-square">
+                    <div id="qrcode" class="bg-white w-full"></div>
                 </div>
                 <p class="text-sm text-muted-foreground text-center mb-6">Scannez avec l'application mobile <br> <span
                         class="text-primary font-bold text-sm">ClipboardX</span></p>
@@ -503,14 +509,38 @@
 
                 const qrContainer = document.getElementById("qrcode")
                 qrContainer.innerHTML = ""
-                new QRCode(qrContainer, {
-                    text: qrData,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000",
-                    colorLight: "#fff",
-                    correctLevel: QRCode.CorrectLevel.H
-                })
+                const qrCode = new QRCodeStyling({
+                    type: "canvas",
+                    shape: "square",
+                    width: 300,
+                    height: 300,
+                    data: qrData,
+                    margin: 0,
+                    qrOptions: {
+                        typeNumber: "0",
+                        mode: "Byte",
+                        errorCorrectionLevel: "Q"
+                    },
+                    dotsOptions: {
+                        type: "extra-rounded",
+                        color: "#000",
+                        roundSize: true
+                    },
+                    backgroundOptions: {
+                        round: 0,
+                        color: "#ffffff"
+                    },
+                    cornersSquareOptions: {
+                        type: "extra-rounded",
+                        color: "#000000"
+                    },
+                    cornersDotOptions: {
+                        type: "",
+                        color: "#000000"
+                    }
+                });
+
+                qrCode.append(qrContainer)
 
                 qrContainer.removeAttribute("title")
                 const img = qrContainer.querySelector("img")
