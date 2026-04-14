@@ -12,7 +12,7 @@ export async function watcher() {
         lastContent = lastEntry.content as string
     }
 
-    setInterval(async () => {
+    const checkClipboard = async () => {
         if (store.isIncognito) {
             lastContent = clipboard.readText()
             return
@@ -37,5 +37,9 @@ export async function watcher() {
         } catch (err) {
             console.error("Erreur lecture/écriture :", err)
         }
-    }, 1000)
+    }
+
+    await checkClipboard()
+
+    setInterval(checkClipboard, 1000)
 }
